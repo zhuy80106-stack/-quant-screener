@@ -556,8 +556,10 @@ with tab1:
         
         if search_term:
             search_upper = search_term.upper()
-            filtered = df[df['symbol'].str.upper().str.contains(search_upper) | 
-                          df['name'].str.upper().str.contains(search_upper)]
+            filtered = df[(df['symbol'].str.upper().str.contains(search_upper)) | 
+                         (df['name'].str.upper().str.contains(search_upper))]
+            if len(filtered) > 0:
+                st.info(f"Showing search results for '{search_term}' (bypassing filters)")
         
         if len(filtered) > 0:
             display_df = filtered[['symbol', 'name', 'sector', 'pe', 'pb', 'div_yield', 'roe', 'price', 'yoy', 'eps_growth']].copy()
