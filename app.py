@@ -636,6 +636,10 @@ with tab1:
             st.session_state.selected = filtered['symbol'].tolist()
         else:
             st.warning(t('no_match'))
+            if st.session_state.get('lang') == 'en':
+                st.info("💡 Tip: Try increasing P/E or P/B limits, or lowering dividend yield requirements.")
+            else:
+                st.info("💡 提示：試著調高 P/E 或 P/B 上限，或降低殖利率要求。")
             st.session_state.selected = []
     else:
         st.error(t('unable_fetch'))
