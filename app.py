@@ -43,6 +43,16 @@ st.markdown(f'''
         padding: 20px;
         margin: 10px 0;
     }}
+    input[type="range"] {{
+        -webkit-tap-highlight-color: transparent;
+        touch-action: pan-x;
+    }}
+    .stSlider {{
+        padding-bottom: 20px;
+    }}
+    div[data-baseweb="slider"] {{
+        touch-action: none;
+    }}
     </style>
 ''', unsafe_allow_html=True)
 
