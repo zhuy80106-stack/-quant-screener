@@ -474,19 +474,19 @@ with st.sidebar:
     
     params = {}
     if strategy == t('value_investing'):
-        params['pe'] = st.slider(t('pe_ratio'), 0, 50, 20, 1)
-        params['pb'] = st.slider(t('pb_ratio'), 0.0, 10.0, 3.0, 0.1)
-        params['div_yield'] = st.slider(t('dividend_yield'), 0.0, 15.0, 2.0, 0.1)
+        params['pe'] = st.slider(t('pe_ratio'), 0, 100, 25, 1)
+        params['pb'] = st.slider(t('pb_ratio'), 0.0, 15.0, 5.0, 0.1)
+        params['div_yield'] = st.slider(t('dividend_yield'), 0.0, 20.0, 2.0, 0.1)
     elif strategy == t('quality_growth'):
         params['roe'] = st.slider(t('roe'), 0, 50, 15, 1)
         params['debt'] = st.slider(t('debt_ratio'), 0, 100, 80, 5)
         params['profit_margin'] = st.slider(t('profit_margin'), 0, 50, 10, 1)
     elif strategy == t('high_dividend'):
-        params['div_yield'] = st.slider(t('dividend_yield'), 0.0, 15.0, 4.0, 0.1)
+        params['div_yield'] = st.slider(t('dividend_yield'), 0.0, 20.0, 4.0, 0.1)
     else:
-        params['pe'] = st.slider(t('pe_ratio'), 0, 50, 25, 1)
-        params['pb'] = st.slider(t('pb_ratio'), 0.0, 10.0, 3.0, 0.1)
-        params['div_yield'] = st.slider(t('dividend_yield'), 0.0, 15.0, 2.0, 0.1)
+        params['pe'] = st.slider(t('pe_ratio'), 0, 100, 30, 1)
+        params['pb'] = st.slider(t('pb_ratio'), 0.0, 15.0, 5.0, 0.1)
+        params['div_yield'] = st.slider(t('dividend_yield'), 0.0, 20.0, 2.0, 0.1)
         params['roe'] = st.slider(t('roe'), 0, 50, 10, 1)
     
     params['yoy_min'] = st.slider("📈 Revenue YoY Growth (%) (min)", -100, 100, -100, 5)
