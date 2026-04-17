@@ -422,6 +422,20 @@ def format_value(val, field):
         return t('na')
     if field in ['pe', 'pb', 'div_yield', 'roe', 'profit_margin']:
         return f"{val:.2f}"
+
+def calc_score(row):
+    score = 0
+    if row['pe'] > 0:
+        score += max(0, 30 - row['pe'])
+    if row['pb'] > 0:
+        score += max(0, 20 - row['pb'])
+    score += row['div_yield'] * 2
+    score += row['roe'] * 0.5
+    if row['yoy'] > 0:
+        score += min(row['yoy'], 20)
+    if row['eps_growth'] > 0:
+        score += min(row['eps_growth'], 10)
+    return round(score, 1)
     return str(val)
 
 st.title("📈 Quant Stock Screener")
@@ -512,11 +526,13 @@ with tab1:
         if len(filtered) > 0:
             display_df = filtered[['symbol', 'name', 'sector', 'pe', 'pb', 'div_yield', 'roe', 'price', 'yoy', 'eps_growth']].copy()
             
+            display_df['score'] = display_df.apply(calc_score, axis=1)
+            
             display_df['warning'] = display_df['eps_growth'].apply(lambda x: '⚠️' if x < -20 else '')
             display_df['name'] = display_df.apply(lambda r: f"{r['name']} {r['warning']}", axis=1)
             
-            sort_col = st.selectbox("Sort by", ['pe', 'pb', 'div_yield', 'roe', 'price', 'yoy', 'eps_growth'], index=0, 
-                                    format_func=lambda x: {'pe': 'P/E', 'pb': 'P/B', 'div_yield': 'Dividend Yield', 'roe': 'ROE', 'price': 'Price', 'yoy': 'YoY', 'eps_growth': 'EPS Growth'}[x])
+            sort_col = st.selectbox("Sort by", ['score', 'pe', 'pb', 'div_yield', 'roe', 'price', 'yoy', 'eps_growth'], index=0, 
+                                    format_func=lambda x: {'score': 'Score', 'pe': 'P/E', 'pb': 'P/B', 'div_yield': 'Dividend Yield', 'roe': 'ROE', 'price': 'Price', 'yoy': 'YoY', 'eps_growth': 'EPS Growth'}[x])
             ascending = st.checkbox("Ascending", value=True)
             
             display_df = display_df.sort_values(sort_col, ascending=ascending)
@@ -534,8 +550,9 @@ with tab1:
                 use_container_width=True,
                 hide_index=True,
                 column_config={
+                    'score': st.column_config.NumberColumn('Score', format='%.1f', width=70),
                     'symbol': st.column_config.TextColumn('Symbol', width=70),
-                    'name': st.column_config.TextColumn('Name', width=200),
+                    'name': st.column_config.TextColumn('Name', width=180),
                     'sector': st.column_config.TextColumn('Sector', width=130),
                     'pe': st.column_config.TextColumn('P/E', width=70),
                     'pb': st.column_config.TextColumn('P/B', width=70),
