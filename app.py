@@ -547,8 +547,9 @@ with tab1:
                 st.rerun()
         
         if search_term:
-            filtered = filtered[filtered['symbol'].str.upper().str.contains(search_term.upper()) | 
-                               filtered['name'].str.upper().str.contains(search_term.upper())]
+            search_upper = search_term.upper()
+            filtered = df[df['symbol'].str.upper().str.contains(search_upper) | 
+                          df['name'].str.upper().str.contains(search_upper)]
         
         if len(filtered) > 0:
             display_df = filtered[['symbol', 'name', 'sector', 'pe', 'pb', 'div_yield', 'roe', 'price', 'yoy', 'eps_growth']].copy()
