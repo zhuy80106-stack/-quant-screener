@@ -540,9 +540,14 @@ with tab1:
         with col1:
             st.metric(t('results'), f"{len(filtered)} / {len(df)}")
         with col2:
+            search_term = st.text_input("🔍 Search stock", placeholder="e.g. MU, AAPL", label_visibility="collapsed")
             if st.button(t('refresh')):
                 st.session_state.cached_data = None
                 st.rerun()
+        
+        if search_term:
+            filtered = filtered[filtered['symbol'].str.upper().str.contains(search_term.upper()) | 
+                               filtered['name'].str.upper().str.contains(search_term.upper())]
         
         if len(filtered) > 0:
             display_df = filtered[['symbol', 'name', 'sector', 'pe', 'pb', 'div_yield', 'roe', 'price', 'yoy', 'eps_growth']].copy()
