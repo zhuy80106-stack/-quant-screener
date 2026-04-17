@@ -495,7 +495,7 @@ with st.sidebar:
     elif strategy == t('high_growth'):
         params['pe'] = st.slider(t('pe_ratio'), 0, 100, 50, 1)
         params['roe'] = st.slider(t('roe'), 0, 50, 20, 1)
-        params['div_yield'] = st.slider(t('dividend_yield'), 0.0, 20.0, 0, 0.1)
+        params['div_yield'] = st.slider(t('dividend_yield'), 0.0, 20.0, 0.0, 0.1)
     elif strategy == t('conservative'):
         params['pe'] = st.slider(t('pe_ratio'), 0, 100, 15, 1)
         params['pb'] = st.slider(t('pb_ratio'), 0.0, 15.0, 2.0, 0.1)
@@ -503,7 +503,7 @@ with st.sidebar:
     elif strategy == t('tech_growth'):
         params['pe'] = st.slider(t('pe_ratio'), 0, 100, 45, 1)
         params['roe'] = st.slider(t('roe'), 0, 50, 20, 1)
-        params['div_yield'] = st.slider(t('dividend_yield'), 0.0, 20.0, 0, 0.1)
+        params['div_yield'] = st.slider(t('dividend_yield'), 0.0, 20.0, 0.0, 0.1)
     elif strategy == t('value_trap'):
         params['pb'] = st.slider(t('pb_ratio'), 0.0, 15.0, 1.0, 0.1)
         params['pe'] = st.slider(t('pe_ratio'), 0, 100, 20, 1)
