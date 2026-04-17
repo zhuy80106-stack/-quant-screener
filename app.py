@@ -67,6 +67,7 @@ TEXT = {
         'value_investing': 'Value Investing',
         'quality_growth': 'Quality Growth',
         'high_dividend': 'High Dividend',
+        'high_growth': 'High Growth',
         'custom': 'Custom',
         'pe_ratio': 'P/E Ratio (max)',
         'pb_ratio': 'P/B Ratio (max)',
@@ -127,6 +128,7 @@ TEXT = {
         'value_investing': '價值投資型',
         'quality_growth': '品質成長型',
         'high_dividend': '高股息型',
+        'high_growth': '高成長型',
         'custom': '自訂',
         'pe_ratio': '本益比 (最高)',
         'pb_ratio': '股價淨值比 (最高)',
@@ -469,7 +471,7 @@ with st.sidebar:
     st.subheader(t('strategy_template'))
     strategy = st.selectbox(
         t('select_strategy'),
-        [t('value_investing'), t('quality_growth'), t('high_dividend'), t('custom')]
+        [t('value_investing'), t('quality_growth'), t('high_dividend'), t('high_growth'), t('custom')]
     )
     
     params = {}
@@ -483,6 +485,10 @@ with st.sidebar:
         params['profit_margin'] = st.slider(t('profit_margin'), 0, 50, 10, 1)
     elif strategy == t('high_dividend'):
         params['div_yield'] = st.slider(t('dividend_yield'), 0.0, 20.0, 4.0, 0.1)
+    elif strategy == t('high_growth'):
+        params['pe'] = st.slider(t('pe_ratio'), 0, 100, 50, 1)
+        params['roe'] = st.slider(t('roe'), 0, 50, 20, 1)
+        params['div_yield'] = st.slider(t('dividend_yield'), 0.0, 20.0, 0, 0.1)
     else:
         params['pe'] = st.slider(t('pe_ratio'), 0, 100, 30, 1)
         params['pb'] = st.slider(t('pb_ratio'), 0.0, 15.0, 5.0, 0.1)
@@ -531,6 +537,8 @@ with tab1:
             mask = (df['roe'] >= params['roe']) & (df['debt'] <= params['debt']) & (df['profit_margin'] >= params['profit_margin']) & (df['yoy'] >= params['yoy_min'])
         elif strategy == t('high_dividend'):
             mask = (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
+        elif strategy == t('high_growth'):
+            mask = (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['roe'] >= params['roe']) & (df['yoy'] >= params['yoy_min'])
         else:
             mask = (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['pb'] <= params['pb']) & (df['div_yield'] >= params['div_yield']) & (df['roe'] >= params['roe']) & (df['yoy'] >= params['yoy_min'])
         
