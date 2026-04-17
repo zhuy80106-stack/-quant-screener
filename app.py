@@ -602,7 +602,7 @@ with tab1:
             
             display_df = display_df.sort_values(sort_col, ascending=ascending)
             
-            na_text = "N/A" if st.session_state.get('lang') == 'en' else "無資料"
+            na_text = "Data Pending" if st.session_state.get('lang') == 'en' else "資料待補"
             display_df['pe'] = display_df['pe'].apply(lambda x: f"{x:.2f}" if x > 0 else na_text)
             display_df['pb'] = display_df['pb'].apply(lambda x: f"{x:.2f}" if x > 0 else na_text)
             display_df['div_yield'] = display_df['div_yield'].apply(lambda x: f"{x:.2f}%" if x > 0 else na_text)
