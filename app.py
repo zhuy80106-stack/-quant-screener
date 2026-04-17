@@ -534,16 +534,16 @@ with tab1:
                 use_container_width=True,
                 hide_index=True,
                 column_config={
-                    'symbol': st.column_config.TextColumn('Symbol', width='small'),
-                    'name': st.column_config.TextColumn('Name', width='medium'),
-                    'sector': st.column_config.TextColumn('Sector', width='medium'),
-                    'pe': st.column_config.TextColumn('P/E', width='small'),
-                    'pb': st.column_config.TextColumn('P/B', width='small'),
-                    'div_yield': st.column_config.TextColumn('Div Yield', width='small'),
-                    'roe': st.column_config.TextColumn('ROE', width='small'),
-                    'price': st.column_config.TextColumn('Price', width='small'),
-                    'yoy': st.column_config.TextColumn('YoY %', width='small'),
-                    'eps_growth': st.column_config.TextColumn('EPS Growth %', width='small'),
+                    'symbol': st.column_config.TextColumn('Symbol', width=70),
+                    'name': st.column_config.TextColumn('Name', width=200),
+                    'sector': st.column_config.TextColumn('Sector', width=130),
+                    'pe': st.column_config.TextColumn('P/E', width=70),
+                    'pb': st.column_config.TextColumn('P/B', width=70),
+                    'div_yield': st.column_config.TextColumn('Div Yield', width=80),
+                    'roe': st.column_config.TextColumn('ROE', width=70),
+                    'price': st.column_config.TextColumn('Price', width=80),
+                    'yoy': st.column_config.TextColumn('YoY %', width=80),
+                    'eps_growth': st.column_config.TextColumn('EPS Growth %', width=100),
                 }
             )
             
