@@ -536,12 +536,13 @@ with tab1:
         
         filtered = df[mask]
         
-        col1, col2 = st.columns([1, 3])
+        col1, col2, col3 = st.columns([1, 2, 1])
         with col1:
             st.metric(t('results'), f"{len(filtered)} / {len(df)}")
         with col2:
-            search_term = st.text_input("🔍 Search stock", placeholder="e.g. MU, AAPL", label_visibility="collapsed")
-            if st.button(t('refresh')):
+            search_term = st.text_input("🔍 Search", placeholder="MU, AAPL...", label_visibility="collapsed")
+        with col3:
+            if st.button(t('refresh'), use_container_width=True):
                 st.session_state.cached_data = None
                 st.rerun()
         
