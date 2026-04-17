@@ -188,10 +188,13 @@ def is_valid_taiwan_stock(stock_id):
 
 @st.cache_data(ttl=3600)
 def get_taiwan_stocks():
-    url = "https://api.finmindtrade.com/api/v4/data"
-    params = {"dataset": "TaiwanStockInfo", "data": ""}
+    default_stocks = ['2330', '2317', '2454', '3034', '2412', '2882', '2891', '1301', '1326', '1215',
+            '3008', '2382', '2451', '2308', '2207', '2227', '2231', '8046', '2105', '2609',
+            '2474', '2449', '2377', '2353', '2344', '2327', '2315', '2303', '2297', '2288']
     try:
-        resp = requests.get(url, params=params, timeout=30)
+        url = "https://api.finmindtrade.com/api/v4/data"
+        params = {"dataset": "TaiwanStockInfo", "data": ""}
+        resp = requests.get(url, params=params, timeout=10)
         if resp.status_code == 200:
             data = resp.json()
             if 'data' in data:
@@ -200,8 +203,7 @@ def get_taiwan_stocks():
                 return [s for s in stocks if is_valid_taiwan_stock(s)]
     except:
         pass
-    return ['2330', '2317', '2454', '3034', '2412', '2882', '2891', '1301', '1326', '1215',
-            '3008', '2382', '2451', '2308', '2207', '2227', '2231', '8046', '2105', '2609']
+    return default_stocks
 
 @st.cache_data(ttl=3600)
 def get_us_stocks():
