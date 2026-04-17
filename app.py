@@ -68,6 +68,9 @@ TEXT = {
         'quality_growth': 'Quality Growth',
         'high_dividend': 'High Dividend',
         'high_growth': 'High Growth',
+        'conservative': 'Conservative Income',
+        'tech_growth': 'Tech Growth',
+        'value_trap': 'Value Trap',
         'custom': 'Custom',
         'pe_ratio': 'P/E Ratio (max)',
         'pb_ratio': 'P/B Ratio (max)',
@@ -129,6 +132,9 @@ TEXT = {
         'quality_growth': '品質成長型',
         'high_dividend': '高股息型',
         'high_growth': '高成長型',
+        'conservative': '保守存股',
+        'tech_growth': '科技成長',
+        'value_trap': '危機入市',
         'custom': '自訂',
         'pe_ratio': '本益比 (最高)',
         'pb_ratio': '股價淨值比 (最高)',
@@ -471,7 +477,8 @@ with st.sidebar:
     st.subheader(t('strategy_template'))
     strategy = st.selectbox(
         t('select_strategy'),
-        [t('value_investing'), t('quality_growth'), t('high_dividend'), t('high_growth'), t('custom')]
+        [t('value_investing'), t('quality_growth'), t('high_dividend'), t('high_growth'), 
+         t('conservative'), t('tech_growth'), t('value_trap'), t('custom')]
     )
     
     params = {}
@@ -489,6 +496,18 @@ with st.sidebar:
         params['pe'] = st.slider(t('pe_ratio'), 0, 100, 50, 1)
         params['roe'] = st.slider(t('roe'), 0, 50, 20, 1)
         params['div_yield'] = st.slider(t('dividend_yield'), 0.0, 20.0, 0, 0.1)
+    elif strategy == t('conservative'):
+        params['pe'] = st.slider(t('pe_ratio'), 0, 100, 15, 1)
+        params['pb'] = st.slider(t('pb_ratio'), 0.0, 15.0, 2.0, 0.1)
+        params['div_yield'] = st.slider(t('dividend_yield'), 0.0, 20.0, 4.0, 0.1)
+    elif strategy == t('tech_growth'):
+        params['pe'] = st.slider(t('pe_ratio'), 0, 100, 45, 1)
+        params['roe'] = st.slider(t('roe'), 0, 50, 20, 1)
+        params['div_yield'] = st.slider(t('dividend_yield'), 0.0, 20.0, 0, 0.1)
+    elif strategy == t('value_trap'):
+        params['pb'] = st.slider(t('pb_ratio'), 0.0, 15.0, 1.0, 0.1)
+        params['pe'] = st.slider(t('pe_ratio'), 0, 100, 20, 1)
+        params['div_yield'] = st.slider(t('dividend_yield'), 0.0, 20.0, 2.0, 0.1)
     else:
         params['pe'] = st.slider(t('pe_ratio'), 0, 100, 30, 1)
         params['pb'] = st.slider(t('pb_ratio'), 0.0, 15.0, 5.0, 0.1)
@@ -539,6 +558,12 @@ with tab1:
             mask = (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
         elif strategy == t('high_growth'):
             mask = (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['roe'] >= params['roe']) & (df['yoy'] >= params['yoy_min'])
+        elif strategy == t('conservative'):
+            mask = (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['pb'] <= params['pb']) & (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
+        elif strategy == t('tech_growth'):
+            mask = (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['roe'] >= params['roe']) & (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
+        elif strategy == t('value_trap'):
+            mask = (df['pb'] > 0) & (df['pb'] <= params['pb']) & (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
         else:
             mask = (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['pb'] <= params['pb']) & (df['div_yield'] >= params['div_yield']) & (df['roe'] >= params['roe']) & (df['yoy'] >= params['yoy_min'])
         
