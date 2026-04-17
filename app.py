@@ -186,23 +186,27 @@ def is_valid_taiwan_stock(stock_id):
         return False
     return True
 
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=1800)
 def get_taiwan_stocks():
     default_stocks = ['2330', '2317', '2454', '3034', '2412', '2882', '2891', '1301', '1326', '1215',
             '3008', '2382', '2451', '2308', '2207', '2227', '2231', '8046', '2105', '2609',
-            '2474', '2449', '2377', '2353', '2344', '2327', '2315', '2303', '2297', '2288']
+            '2474', '2449', '2377', '2353', '2344', '2327', '2315', '2303', '2297', '2288',
+            '2408', '2409', '2413', '2417', '2420', '2421', '2425', '2427', '2428', '2430',
+            '2431', '2433', '2434', '2436', '2437', '2438', '2441', '2443', '2444', '2445']
     try:
         url = "https://api.finmindtrade.com/api/v4/data"
         params = {"dataset": "TaiwanStockInfo", "data": ""}
-        resp = requests.get(url, params=params, timeout=10)
+        resp = requests.get(url, params=params, timeout=15)
         if resp.status_code == 200:
             data = resp.json()
-            if 'data' in data:
+            if 'data' in data and data['data']:
                 df = pd.DataFrame(data['data'])
-                stocks = df['stock_id'].tolist()[:600]
-                return [s for s in stocks if is_valid_taiwan_stock(s)]
-    except:
-        pass
+                stocks = df['stock_id'].tolist()[:500]
+                valid = [s for s in stocks if is_valid_taiwan_stock(s)]
+                if valid:
+                    return valid
+    except Exception as e:
+        print(f"API error: {e}")
     return default_stocks
 
 @st.cache_data(ttl=3600)
@@ -493,9 +497,16 @@ with tab1:
     
     if 'cached_data' not in st.session_state or st.session_state.cached_data is None:
         with st.spinner(t('fetching')):
-            st.session_state.cached_data = get_all_metrics(st.session_state.stocks[:150], market_val)
+            stock_limit = 80 if market_val == "Taiwan" else 150
+            st.session_state.cached_data = get_all_metrics(st.session_state.stocks[:stock_limit], market_val)
     
     df = pd.DataFrame(st.session_state.cached_data)
+    if df.empty:
+        st.warning("No data fetched. Trying alternative stock list...")
+        fallback_stocks = get_taiwan_stocks() if market_val == "Taiwan" else get_us_stocks()
+        st.session_state.cached_data = get_all_metrics(fallback_stocks[:50], market_val)
+        df = pd.DataFrame(st.session_state.cached_data)
+    
     df = df.drop_duplicates(subset=['symbol'], keep='first')
     
     if 'yoy' not in df.columns:
