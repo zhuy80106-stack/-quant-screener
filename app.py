@@ -538,7 +538,7 @@ with tab1:
         st.session_state.cached_data = None
         st.rerun()
     
-if st.session_state.cached_data is None:
+    if st.session_state.cached_data is None:
         # Use sample data to avoid yfinance rate limiting
         if market_val == "Taiwan":
             st.session_state.cached_data = [
