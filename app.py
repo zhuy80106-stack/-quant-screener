@@ -582,13 +582,14 @@ with tab1:
         
         # Toggle between all stocks and filtered
         if 'show_all' not in st.session_state:
-            st.session_state.show_all = False
+            st.session_state.show_all = True  # Default to show all
         
         show_all_toggle = st.checkbox("Show All Stocks", value=st.session_state.show_all, key="show_all_chk")
         st.session_state.show_all = show_all_toggle
         
         if show_all_toggle:
             filtered = df.copy()
+            st.caption(f"Showing ALL {len(filtered)} stocks")
         else:
             if strategy == t('value_investing'):
                 mask = (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['pb'] <= params['pb']) & (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
