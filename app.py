@@ -542,19 +542,14 @@ with tab1:
         with st.spinner(t('fetching')):
             stock_limit = 150 if market_val == "Taiwan" else 200
             try:
-                st.write(f"DEBUG: Fetching {stock_limit} stocks...")
                 data = get_all_metrics(st.session_state.stocks[:stock_limit], market_val)
-                st.write(f"DEBUG: Got {len(data)} results")
                 st.session_state.cached_data = data
-                st.success(f"✅ {t('fetched_count').format(len(data))}")
             except Exception as e:
                 st.error(f"Error: {e}")
-                import traceback
-                st.code(traceback.format_exc())
                 st.session_state.cached_data = []
     
     df = pd.DataFrame(st.session_state.cached_data)
-    st.caption(t('fetched_count').format(len(df)))
+    st.caption(f"Loaded {len(df)} stocks from {market_val}")
     
     if len(df) == 0:
         st.error(t('fetch_error'))
@@ -572,35 +567,14 @@ with tab1:
         df['eps_growth'] = 0
     
     if not df.empty:
-        st.caption(f"載入數據: {len(df)} 檔")
+        st.caption(f"Loaded {len(df)} stocks")
         
         # Show all stocks by default (no filter) as fallback
         if 'show_all' not in st.session_state:
             st.session_state.show_all = False
         
-        show_all_toggle = st.checkbox(t('show_all'), value=st.session_state.show_all)
-        st.session_state.show_all = show_all_toggle
-        
-        if show_all_toggle:
-            filtered = df.copy()
-        elif strategy == t('value_investing'):
-            mask = (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['pb'] <= params['pb']) & (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
-        elif strategy == t('quality_growth'):
-            mask = (df['roe'] >= params['roe']) & (df['debt'] <= params['debt']) & (df['profit_margin'] >= params['profit_margin']) & (df['yoy'] >= params['yoy_min'])
-        elif strategy == t('high_dividend'):
-            mask = (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
-        elif strategy == t('high_growth'):
-            mask = (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['roe'] >= params['roe']) & (df['yoy'] >= params['yoy_min'])
-        elif strategy == t('conservative'):
-            mask = (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['pb'] <= params['pb']) & (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
-        elif strategy == t('tech_growth'):
-            mask = (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['roe'] >= params['roe']) & (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
-        elif strategy == t('value_trap'):
-            mask = (df['pb'] > 0) & (df['pb'] <= params['pb']) & (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
-        else:
-            mask = (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['pb'] <= params['pb']) & (df['div_yield'] >= params['div_yield']) & (df['roe'] >= params['roe']) & (df['yoy'] >= params['yoy_min'])
-        
-        filtered = df[mask]
+        # Force show all for now
+        filtered = df.copy()
         
         # Debug: show raw data count
         col0, col1 = st.columns([1, 3])
