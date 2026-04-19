@@ -53,7 +53,7 @@ def fetch_one(symbol, market):
             'name': info.get('shortName', symbol),
             'sector': info.get('sector') or 'Unknown',
             'price': price,
-            'pe': info.get('trailingPE') or 0,
+            'pe': (info.get('trailingPE') or 0) if (info.get('trailingPE') or 0) > 0 and (info.get('trailingPE') or 0) < 200 else 0,
             'pb': info.get('priceToBook') or 0,
             'div_yield': div_yield,
             'roe': min((info.get('returnOnEquity') or 0) * 100, 100),

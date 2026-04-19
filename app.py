@@ -357,7 +357,7 @@ def fetch_stock_metrics(symbol, market):
             'symbol': symbol,
             'name': info.get('shortName', symbol),
             'sector': info.get('sector') or 'Unknown',
-            'pe': info.get('trailingPE') or 0,
+            'pe': (info.get('trailingPE') or 0) if (info.get('trailingPE') or 0) > 0 and (info.get('trailingPE') or 0) < 200 else 0,
             'pb': info.get('priceToBook') or 0,
             'div_yield': div_yield_pct,
             'roe': min((info.get('returnOnEquity') or 0) * 100, 100),
