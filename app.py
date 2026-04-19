@@ -593,14 +593,11 @@ with tab1:
         filtered = df[mask]
         
         # Debug: show raw data count
-        col0, col1, col2, col3 = st.columns([1, 1, 1, 1])
+        col0, col1 = st.columns([1, 3])
         with col0:
-            st.caption(f"載入: {len(df)} 檔")
+            st.caption(f"Loaded: {len(df)} stocks | Filtered: {len(filtered)}")
         with col1:
-            st.metric(t('results'), f"{len(filtered)} / {len(df)}")
-        with col2:
             search_term = st.text_input("🔍 Search", placeholder="2330...", label_visibility="collapsed")
-        with col3:
             if st.button(t('refresh'), use_container_width=True):
                 st.session_state.cached_data = None
                 st.rerun()
