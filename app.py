@@ -569,17 +569,38 @@ with tab1:
     if not df.empty:
         st.caption(f"Loaded {len(df)} stocks")
         
-        # Show all stocks by default (no filter) as fallback
+        # Toggle between all stocks and filtered
         if 'show_all' not in st.session_state:
             st.session_state.show_all = False
         
-        # Force show all for now
-        filtered = df.copy()
+        show_all_toggle = st.checkbox("Show All Stocks", value=st.session_state.show_all, key="show_all_chk")
+        st.session_state.show_all = show_all_toggle
+        
+        if show_all_toggle:
+            filtered = df.copy()
+        else:
+            if strategy == t('value_investing'):
+                mask = (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['pb'] <= params['pb']) & (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
+            elif strategy == t('quality_growth'):
+                mask = (df['roe'] >= params['roe']) & (df['debt'] <= params['debt']) & (df['profit_margin'] >= params['profit_margin']) & (df['yoy'] >= params['yoy_min'])
+            elif strategy == t('high_dividend'):
+                mask = (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
+            elif strategy == t('high_growth'):
+                mask = (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['roe'] >= params['roe']) & (df['yoy'] >= params['yoy_min'])
+            elif strategy == t('conservative'):
+                mask = (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['pb'] <= params['pb']) & (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
+            elif strategy == t('tech_growth'):
+                mask = (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['roe'] >= params['roe']) & (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
+            elif strategy == t('value_trap'):
+                mask = (df['pb'] > 0) & (df['pb'] <= params['pb']) & (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
+            else:
+                mask = (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['pb'] <= params['pb']) & (df['div_yield'] >= params['div_yield']) & (df['roe'] >= params['roe']) & (df['yoy'] >= params['yoy_min'])
+            filtered = df[mask]
         
         # Debug: show raw data count
         col0, col1 = st.columns([1, 3])
         with col0:
-            st.caption(f"Loaded: {len(df)} stocks | Filtered: {len(filtered)}")
+            st.caption(f"Total: {len(df)} | Showing: {len(filtered)}")
         with col1:
             search_term = st.text_input("🔍 Search", placeholder="2330...", label_visibility="collapsed")
             if st.button(t('refresh'), use_container_width=True):
