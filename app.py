@@ -1,4 +1,5 @@
 import streamlit as st
+st.cache_data.clear()
 import pandas as pd
 import numpy as np
 import yfinance as yf
@@ -267,7 +268,7 @@ def is_valid_taiwan_stock(stock_id):
         return False
     return True
 
-@st.cache_data(ttl=1800)
+@st.cache_data(ttl=60)
 def get_taiwan_stocks():
     default_stocks = ['2330', '2317', '2454', '3034', '2412', '2882', '2891', '1301', '1326', '1215',
             '3008', '2382', '2451', '2308', '2207', '2227', '2231', '8046', '2105', '2609',
