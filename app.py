@@ -781,7 +781,6 @@ with tab1:
     
     df['invalid'] = df.apply(check_invalid, axis=1)
     df.loc[df['symbol'] == 'UNH', 'invalid'] = True
-    st.write(f"DEBUG UNH invalid: {df.loc[df['symbol'] == 'UNH', 'invalid'].values}")
     valid_count = (~df['invalid']).sum()
     
     if not df.empty:
@@ -800,12 +799,8 @@ with tab1:
             st.caption(f"Showing ALL {len(filtered)} stocks")
         else:
             valid_mask = ~df['invalid']
-            st.write(f"DEBUG valid_mask count: {valid_mask.sum()}, invalid count: {(~valid_mask).sum()}")
             if strategy == t('value_investing'):
-                st.write(f"DEBUG params: pe<={params['pe']}, div>={params['div_yield']}")
                 mask = valid_mask & (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['pb'] <= params['pb']) & (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
-                st.write(f"DEBUG after mask: {len(df[mask])} stocks")
-                st.write(f"DEBUG filtered symbols: {df[mask]['symbol'].tolist()}")
             elif strategy == t('quality_growth'):
                 mask = valid_mask & (df['roe'] >= params['roe']) & (df['debt'] <= params['debt']) & (df['profit_margin'] >= params['profit_margin']) & (df['yoy'] >= params['yoy_min'])
             elif strategy == t('high_dividend'):
