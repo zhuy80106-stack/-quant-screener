@@ -781,6 +781,7 @@ with tab1:
     
     df['invalid'] = df.apply(check_invalid, axis=1)
     df.loc[df['symbol'] == 'UNH', 'invalid'] = True
+    st.write(f"DEBUG UNH invalid: {df.loc[df['symbol'] == 'UNH', 'invalid'].values}")
     valid_count = (~df['invalid']).sum()
     
     if not df.empty:
