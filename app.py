@@ -764,6 +764,7 @@ with tab1:
     df = df.drop_duplicates(subset=['symbol'], keep='first')
     
     # Force correct known bad data
+    st.write("DEBUG symbols:", df['symbol'].tolist()[:20])
     df.loc[df['symbol'] == 'BRK.B', 'sector'] = 'Financials'
     st.write(f"DEBUG BRK sector: {df.loc[df['symbol'] == 'BRK.B', 'sector'].values}")
     
