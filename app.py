@@ -371,7 +371,7 @@ def fetch_stock_metrics(symbol, market):
         return {
             'symbol': symbol,
             'name': info.get('shortName', symbol),
-            'sector': info.get('sector') or 'Unknown',
+            'sector': 'Finance' if symbol == 'BRK.B' else (info.get('sector') or 'Unknown'),
             'pe': (info.get('trailingPE') or 0) if (info.get('trailingPE') or 0) > 0 and (info.get('trailingPE') or 0) < 200 else 0,
             'pb': info.get('priceToBook') or 0,
             'div_yield': div_yield_pct,
@@ -791,22 +791,23 @@ with tab1:
             filtered = df.copy()
             st.caption(f"Showing ALL {len(filtered)} stocks")
         else:
+            valid_mask = ~df['invalid']
             if strategy == t('value_investing'):
-                mask = (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['pb'] <= params['pb']) & (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
+                mask = valid_mask & (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['pb'] <= params['pb']) & (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
             elif strategy == t('quality_growth'):
-                mask = (df['roe'] >= params['roe']) & (df['debt'] <= params['debt']) & (df['profit_margin'] >= params['profit_margin']) & (df['yoy'] >= params['yoy_min'])
+                mask = valid_mask & (df['roe'] >= params['roe']) & (df['debt'] <= params['debt']) & (df['profit_margin'] >= params['profit_margin']) & (df['yoy'] >= params['yoy_min'])
             elif strategy == t('high_dividend'):
-                mask = (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
+                mask = valid_mask & (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
             elif strategy == t('high_growth'):
-                mask = (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['roe'] >= params['roe']) & (df['yoy'] >= params['yoy_min'])
+                mask = valid_mask & (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['roe'] >= params['roe']) & (df['yoy'] >= params['yoy_min'])
             elif strategy == t('conservative'):
-                mask = (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['pb'] <= params['pb']) & (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
+                mask = valid_mask & (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['pb'] <= params['pb']) & (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
             elif strategy == t('tech_growth'):
-                mask = (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['roe'] >= params['roe']) & (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
+                mask = valid_mask & (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['roe'] >= params['roe']) & (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
             elif strategy == t('value_trap'):
-                mask = (df['pb'] > 0) & (df['pb'] <= params['pb']) & (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
+                mask = valid_mask & (df['pb'] > 0) & (df['pb'] <= params['pb']) & (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
             else:
-                mask = (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['pb'] <= params['pb']) & (df['div_yield'] >= params['div_yield']) & (df['roe'] >= params['roe']) & (df['yoy'] >= params['yoy_min'])
+                mask = valid_mask & (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['pb'] <= params['pb']) & (df['div_yield'] >= params['div_yield']) & (df['roe'] >= params['roe']) & (df['yoy'] >= params['yoy_min'])
             filtered = df[mask]
         
         # Debug: show raw data count
