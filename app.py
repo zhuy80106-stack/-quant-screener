@@ -748,6 +748,7 @@ with tab1:
                 st.caption("使用 Mock Data（請先執行 fetch_data.py 建立真實數據快照）")
     
     df = pd.DataFrame(st.session_state.cached_data)
+    st.write(f"DEBUG: After df created, BRK in df: {'BRK.B' in df['symbol'].values}")
     st.caption(f"Loaded {len(df)} stocks from {market_val}")
     
     if len(df) == 0:
