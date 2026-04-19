@@ -553,10 +553,12 @@ with tab1:
     
     if len(df) == 0:
         st.error(t('fetch_error'))
-        if st.button(t('debug_mode')):
-            st.write(f"市場: {market_val}")
-            st.write(f"股票數: {len(st.session_state.stocks)}")
-            st.write(f"前10股票: {st.session_state.stocks[:10]}")
+        if st.button("🔧 Debug"):
+            st.write(f"market_val: '{market_val}'")
+            st.write(f"current_market: '{st.session_state.get('current_market')}'")
+            st.write(f"stocks count: {len(st.session_state.stocks)}")
+            st.write(f"first 5 stocks: {st.session_state.stocks[:5]}")
+            st.write(f"cached_data: {st.session_state.cached_data}")
         st.stop()
     
     df = df.drop_duplicates(subset=['symbol'], keep='first')
