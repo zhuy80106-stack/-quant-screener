@@ -135,13 +135,13 @@ TEXT = {
         'fetched_count': 'Fetched {0} stocks',
         'fetch_error': 'Unable to fetch data. Try USA market.',
         'debug_mode': '🔧 Debug Mode',
-        'show_all': 'Show All (no filter)',
+'show_all': 'Show All (no filter)',
+        'show_all_warning': '⚠️ Showing all stocks - includes data anomalies (e.g., UNH EPS -99.9%)',
         'ticker_list': '📋 Ticker List',
-        'stock_count': 'Stocks',
-        'export_report': '📥 Export Report',
     },
     'zh': {
         'settings': '⚙️ 設定',
+        'show_all_warning': '⚠️ 顯示全部模式包含數據異常的股票（如 UNH EPS -99.9%）',
         'market': '市場',
         'taiwan': '台灣',
         'usa': '美國',
@@ -795,7 +795,7 @@ with tab1:
         
         if show_all_toggle:
             filtered = df.copy()
-            st.warning("⚠️ 顯示全部模式包含數據異常的股票（如 UNH EPS -99.9%）")
+            st.warning(t('show_all_warning'))
             st.caption(f"Showing ALL {len(filtered)} stocks")
         else:
             valid_mask = ~df['invalid']
