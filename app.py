@@ -130,6 +130,13 @@ TEXT = {
         'pe_div': 'P/E & Dividend Yield Distribution',
         'growth': 'Growth',
         'na': 'N/A',
+        'fetched_count': 'Fetched {0} stocks',
+        'fetch_error': 'Unable to fetch data. Try USA market.',
+        'debug_mode': '🔧 Debug Mode',
+        'show_all': 'Show All (no filter)',
+        'ticker_list': '📋 Ticker List',
+        'stock_count': 'Stocks',
+        'export_report': '📥 Export Report',
     },
     'zh': {
         'settings': '⚙️ 設定',
@@ -194,6 +201,13 @@ TEXT = {
         'pe_div': 'P/E 與殖利率分布',
         'growth': '成長中',
         'na': '無資料',
+        'fetched_count': '目前有 {0} 筆資料',
+        'fetch_error': '無法讀取資料，請嘗試美國市場',
+        'debug_mode': '🔧 除錯模式',
+        'show_all': '顯示所有股票 (無篩選)',
+        'ticker_list': '📋 本次回測股票清單',
+        'stock_count': '股票數量',
+        'export_report': '📥 匯出報告',
     }
 }
 
@@ -508,13 +522,13 @@ with tab1:
         st.session_state.cached_data = None
     
     # 強制重新讀取
-    force_refresh = st.button("🔄 強制刷新數據")
+    force_refresh = st.button(t('refresh'))
     if force_refresh:
         st.session_state.cached_data = None
         st.rerun()
     
     if st.session_state.cached_data is None:
-        with st.spinner("正在讀取股票數據..."):
+        with st.spinner(t('fetching')):
             stock_limit = 100 if market_val == "Taiwan" else 150
             try:
                 data = get_all_metrics(st.session_state.stocks[:stock_limit], market_val)
@@ -525,11 +539,11 @@ with tab1:
                 st.session_state.cached_data = []
     
     df = pd.DataFrame(st.session_state.cached_data)
-    st.write(f"目前有 {len(df)} 筆資料")
+    st.caption(t('fetched_count').format(len(df)))
     
     if len(df) == 0:
-        st.error("無法讀取資料，請嘗試美國市場")
-        if st.button("🔧 除錯模式"):
+        st.error(t('fetch_error'))
+        if st.button(t('debug_mode')):
             st.write(f"市場: {market_val}")
             st.write(f"股票數: {len(st.session_state.stocks)}")
             st.write(f"前10股票: {st.session_state.stocks[:10]}")
@@ -549,7 +563,7 @@ with tab1:
         if 'show_all' not in st.session_state:
             st.session_state.show_all = False
         
-        show_all_toggle = st.checkbox("顯示所有股票 (無篩選)", value=st.session_state.show_all)
+        show_all_toggle = st.checkbox(t('show_all'), value=st.session_state.show_all)
         st.session_state.show_all = show_all_toggle
         
         if show_all_toggle:
@@ -710,11 +724,11 @@ with tab2:
                     
                     # Show ticker list
                     st.markdown("---")
-                    st.subheader("📋 本次回測股票清單")
+                    st.subheader(t('ticker_list'))
                     selected_stocks = st.session_state.selected[:50]
                     col1, col2 = st.columns([1, 3])
                     with col1:
-                        st.metric("股票數量", f"{len(selected_stocks)} 檔")
+                        st.metric(t('stock_count'), f"{len(selected_stocks)} 檔")
                     with col2:
                         stock_chunks = [selected_stocks[i:i+15] for i in range(0, len(selected_stocks), 15)]
                         for chunk in stock_chunks:
@@ -722,7 +736,7 @@ with tab2:
                     
                     # Export buttons
                     st.markdown("---")
-                    st.subheader("📥 匯出報告")
+                    st.subheader(t('export_report'))
                     
                     col_exp1, col_exp2 = st.columns(2)
                     with col_exp1:
