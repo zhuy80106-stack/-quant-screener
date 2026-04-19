@@ -525,7 +525,7 @@ def calc_score(row, sector_medians=None):
     return round(score, 1)
 
 st.title("📈 Quant Stock Screener")
-st.caption(f"📅 Last Updated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+st.caption(f"📅 App Loaded: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
 if 'lang' not in st.session_state:
     st.session_state.lang = 'en'
