@@ -532,7 +532,7 @@ with tab1:
         st.session_state.cached_data = None
         st.rerun()
     
-if st.session_state.cached_data is None:
+    if st.session_state.cached_data is None:
         with st.spinner(t('fetching')):
             stock_limit = 150 if market_val == "Taiwan" else 200
             try:
