@@ -315,13 +315,16 @@ def fetch_stock_metrics(symbol, market):
         if not price:
             return {'symbol': symbol, 'error': 'Price is None'}
             
+        dividend_val = info.get('dividendYield') or info.get('dividendRate') or info.get('lastDividendValue') or 0
+        div_yield_pct = (dividend_val if isinstance(dividend_val, (int, float)) and dividend_val > 0 else 0) * 100
+        
         return {
             'symbol': symbol,
             'name': info.get('shortName', symbol),
             'sector': info.get('sector') or 'Unknown',
             'pe': info.get('trailingPE') or 0,
             'pb': info.get('priceToBook') or 0,
-            'div_yield': (info.get('dividendYield') or 0) * 100,
+            'div_yield': div_yield_pct,
             'roe': (info.get('returnOnEquity') or 0) * 100,
             'debt': info.get('debtToEquity') or 0,
             'profit_margin': (info.get('profitMargins') or 0) * 100,
