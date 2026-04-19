@@ -1095,4 +1095,4 @@ else:
 | **Max Drawdown** | Largest peak-to-trough decline during the period. |
 
 *Data updated: {0}*
-""".format(datetime.now().strftime("%Y-%m-%d")))
+""".format(datetime.now().strftime("%Y-%m-%d")))# force
