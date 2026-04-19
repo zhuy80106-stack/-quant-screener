@@ -212,6 +212,28 @@ TEXT = {
     }
 }
 
+def validate_data(row):
+    warnings = []
+    
+    if row.get('roe', 0) > 100:
+        warnings.append('ROE >100% (high leverage)')
+    if row.get('roe', 0) < 0:
+        warnings.append('Negative ROE')
+    if row.get('div_yield', 0) > 15:
+        warnings.append(f'Div Yield {row.get("div_yield", 0):.1f}% (unusual)')
+    if row.get('pe', 0) < 0:
+        warnings.append('Negative P/E')
+    if row.get('pe', 0) > 200:
+        warnings.append(f'P/E {row.get("pe", 0):.1f} (too high)')
+    if row.get('profit_margin', 0) < -50:
+        warnings.append('Profit margin < -50%')
+    if row.get('yoy', 0) < -50:
+        warnings.append('Revenue drop > 50%')
+    if row.get('eps_growth', 0) < -50:
+        warnings.append('EPS drop > 50%')
+    
+    return warnings
+
 def t(key):
     lang = st.session_state.get('lang', 'en')
     return TEXT[lang].get(key, TEXT['en'][key])
