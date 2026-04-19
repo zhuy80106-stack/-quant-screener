@@ -484,12 +484,34 @@ def format_value(val, field):
     if field in ['pe', 'pb', 'div_yield', 'roe', 'profit_margin']:
         return f"{val:.2f}"
 
-def calc_score(row):
+def get_sector_medians(df):
+    medians = {}
+    for sector in df['sector'].unique():
+        sector_df = df[df['sector'] == sector]
+        medians[sector] = {
+            'pe': sector_df['pe'].median() if sector_df['pe'].notna().any() else 20,
+            'pb': sector_df['pb'].median() if sector_df['pb'].notna().any() else 3,
+        }
+    return medians
+
+def calc_score(row, sector_medians=None):
     score = 0
+    sector = row.get('sector', 'Unknown')
+    medians = sector_medians or {}
+    sector_medians = sector_medians.get(sector, {'pe': 20, 'pb': 3})
+    
     if row['pe'] > 0:
-        score += max(0, 30 - row['pe'])
+        pe_score = 30 - row['pe']
+        sector_pe = sector_medians.get('pe', 20)
+        if row['pe'] < sector_pe:
+            score += max(0, (sector_pe - row['pe']) * 1.5)
+    
     if row['pb'] > 0:
-        score += max(0, 20 - row['pb'])
+        pb_score = 20 - row['pb']
+        sector_pb = sector_medians.get('pb', 3)
+        if row['pb'] < sector_pb:
+            score += max(0, (sector_pb - row['pb']) * 2)
+    
     score += row['div_yield'] * 2
     score += row['roe'] * 0.5
     if row['yoy'] > 0:
@@ -809,7 +831,8 @@ with tab1:
             
             display_df = display_df.fillna(0)
             
-            display_df['score'] = display_df.apply(calc_score, axis=1)
+            sector_medians = get_sector_medians(display_df)
+            display_df['score'] = display_df.apply(lambda r: calc_score(r, sector_medians), axis=1)
             
             display_df['warning'] = display_df['eps_growth'].apply(lambda x: '⚠️' if x < -20 else '')
             display_df['name'] = display_df.apply(lambda r: f"{r['name']} {r['warning']}", axis=1)
