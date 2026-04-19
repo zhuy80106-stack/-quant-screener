@@ -761,6 +761,9 @@ with tab1:
     
     df = df.drop_duplicates(subset=['symbol'], keep='first')
     
+    # Force correct known bad data
+    df.loc[df['symbol'] == 'BRK.B', 'sector'] = 'Financials'
+    
     numeric_cols = ['pe', 'pb', 'div_yield', 'roe', 'profit_margin', 'yoy', 'eps_growth']
     for col in numeric_cols:
         if col in df.columns:
@@ -776,6 +779,7 @@ with tab1:
         return invalid
     
     df['invalid'] = df.apply(check_invalid, axis=1)
+    df.loc[df['symbol'] == 'UNH', 'invalid'] = True
     valid_count = (~df['invalid']).sum()
     
     if not df.empty:
