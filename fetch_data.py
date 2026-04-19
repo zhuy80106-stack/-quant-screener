@@ -28,12 +28,17 @@ def fetch_one(symbol, market):
         
         price = info.get('currentPrice') or info.get('regularMarketPrice')
         
-        dividend_val = info.get('dividendYield') or info.get('dividendRate') or info.get('lastDividendValue') or 0
-        if isinstance(dividend_val, (int, float)) and dividend_val > 0:
-            div_yield = dividend_val * 100 if dividend_val < 1 else dividend_val
-            if div_yield > 20:
-                div_yield = 0
+        dividend_yield = info.get('dividendYield')
+        if isinstance(dividend_yield, (int, float)) and dividend_yield > 0:
+            div_yield = dividend_yield * 100 if dividend_yield < 1 else dividend_yield
         else:
+            dividend_rate = info.get('dividendRate') or info.get('lastDividendValue') or 0
+            if isinstance(dividend_rate, (int, float)) and dividend_rate > 0 and price:
+                div_yield = (dividend_rate / price) * 100
+            else:
+                div_yield = 0
+        
+        if div_yield > 20:
             div_yield = 0
         
         return {
