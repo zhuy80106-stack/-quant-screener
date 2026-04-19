@@ -805,6 +805,7 @@ with tab1:
                 st.write(f"DEBUG params: pe<={params['pe']}, div>={params['div_yield']}")
                 mask = valid_mask & (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['pb'] <= params['pb']) & (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
                 st.write(f"DEBUG after mask: {len(df[mask])} stocks")
+                st.write(f"DEBUG filtered symbols: {df[mask]['symbol'].tolist()}")
             elif strategy == t('quality_growth'):
                 mask = valid_mask & (df['roe'] >= params['roe']) & (df['debt'] <= params['debt']) & (df['profit_margin'] >= params['profit_margin']) & (df['yoy'] >= params['yoy_min'])
             elif strategy == t('high_dividend'):
