@@ -541,11 +541,20 @@ with tab1:
     if st.session_state.cached_data is None:
         with st.spinner(t('fetching')):
             stock_limit = 150 if market_val == "Taiwan" else 200
+            
+            # Direct test fetch first
+            test_stock = st.session_state.stocks[0]
+            test_symbol = f"{test_stock}.TW" if market_val == "Taiwan" else test_stock
+            test_ticker = yf.Ticker(test_symbol)
+            test_info = test_ticker.info
+            st.caption(f"Test fetch: {test_symbol} -> {test_info.get('currentPrice') if test_info else 'FAILED'}")
+            
             try:
                 data = get_all_metrics(st.session_state.stocks[:stock_limit], market_val)
                 st.session_state.cached_data = data
+                st.caption(f"get_all_metrics returned {len(data)} items")
             except Exception as e:
-                st.error(f"Error: {e}")
+                st.error(f"Error in get_all_metrics: {e}")
                 st.session_state.cached_data = []
     
     df = pd.DataFrame(st.session_state.cached_data)
