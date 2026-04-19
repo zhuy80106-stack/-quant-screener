@@ -365,15 +365,37 @@ def run_backtest(symbols, market, start_date, end_date):
 def calc_metrics(returns):
     if returns is None or len(returns) == 0:
         return {}
+    
+    # Remove extreme outliers (> 50% daily move) to avoid skewing
+    returns = returns[abs(returns) < 0.5]
+    
+    if len(returns) == 0:
+        return {}
+    
     total = returns.iloc[-1] if len(returns) > 0 else 0
-    annual = (1 + total) ** (252 / max(len(returns), 1)) - 1 if len(returns) > 0 else 0
-    volatility = returns.std() * np.sqrt(252) if len(returns) > 0 else 0
+    
+    # Annualize based on actual trading days
+    trading_days = len(returns)
+    annual_factor = 252 / trading_days if trading_days > 0 else 1
+    annual = (1 + total) ** annual_factor - 1
+    
+    # Volatility: annualize daily std
+    daily_vol = returns.std()
+    volatility = daily_vol * np.sqrt(252)
+    
+    # Sharpe: assume 0% risk-free rate for simplicity
     sharpe = annual / volatility if volatility > 0 else 0
-    downside = returns[returns < 0].std() * np.sqrt(252) if len(returns[returns < 0]) > 0 else volatility
+    
+    # Downside volatility for Sortino (only negative returns)
+    negative_returns = returns[returns < 0]
+    downside = negative_returns.std() * np.sqrt(252) if len(negative_returns) > 0 else volatility
     sortino = annual / downside if downside > 0 else 0
+    
+    # Max drawdown
     cummax = returns.cumsum().cummax()
     drawdown = (returns.cumsum() - cummax)
     max_dd = drawdown.min() if len(drawdown) > 0 else 0
+    
     return {
         'total_return': total * 100,
         'annual_return': annual * 100,
