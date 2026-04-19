@@ -212,6 +212,13 @@ TEXT = {
     }
 }
 
+def get_val(info, *keys, default=0):
+    for key in keys:
+        val = info.get(key)
+        if val is not None and val != default:
+            return val
+    return default
+
 def validate_data(row):
     warnings = []
     

@@ -20,6 +20,13 @@ USA_STOCKS = [
     'PEP', 'T', 'VZ', 'MRK', 'PFE', 'ABBV', 'LLY', 'UNH', 'ISRG', 'BDX'
 ]
 
+def get_val(info, *keys, default=0):
+    for key in keys:
+        val = info.get(key)
+        if val is not None and val != default:
+            return val
+    return default
+
 def fetch_one(symbol, market):
     ticker = f"{symbol}.TW" if market == "Taiwan" else symbol
     try:
@@ -31,7 +38,7 @@ def fetch_one(symbol, market):
             info = t.info
         else:
             info = t.info
-            price = info.get('currentPrice') or info.get('regularMarketPrice')
+            price = get_val(info, 'currentPrice', 'regularMarketPrice', 'previousClose', default=0)
         
         time.sleep(0.2)
         
@@ -53,14 +60,14 @@ def fetch_one(symbol, market):
             'name': info.get('shortName', symbol),
             'sector': info.get('sector') or 'Unknown',
             'price': price,
-            'pe': (info.get('trailingPE') or 0) if (info.get('trailingPE') or 0) > 0 and (info.get('trailingPE') or 0) < 200 else 0,
-            'pb': info.get('priceToBook') or 0,
+            'pe': (get_val(info, 'trailingPE', 'forwardPE', 'PEG') or 0) if 0 < (get_val(info, 'trailingPE', 'forwardPE') or 0) < 200 else 0,
+            'pb': get_val(info, 'priceToBook', 'bookValue') or 0,
             'div_yield': div_yield,
-            'roe': min((info.get('returnOnEquity') or 0) * 100, 100),
-            'debt': info.get('debtToEquity') or 0,
-            'profit_margin': (info.get('profitMargins') or 0) * 100,
-            'yoy': (info.get('revenueGrowth') or 0) * 100,
-            'eps_growth': (info.get('earningsGrowth') or 0) * 100,
+            'roe': min((get_val(info, 'returnOnEquity') or 0) * 100, 100),
+            'debt': get_val(info, 'debtToEquity', 'totalDebt') or 0,
+            'profit_margin': (get_val(info, 'profitMargins', 'profitMargin') or 0) * 100,
+            'yoy': (get_val(info, 'revenueGrowth', 'revenue growth') or 0) * 100,
+            'eps_growth': (get_val(info, 'earningsGrowth', 'epsGrowth') or 0) * 100,
             'market': market
         }
     except Exception as e:
