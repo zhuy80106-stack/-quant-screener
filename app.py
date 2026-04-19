@@ -221,11 +221,15 @@ def get_val(info, *keys, default=0):
 
 def validate_data(row):
     warnings = []
+    is_invalid = False
     
     if row.get('roe', 0) > 100:
         warnings.append('ROE >100% (high leverage)')
     if row.get('roe', 0) < 0:
         warnings.append('Negative ROE')
+    if row.get('roe', 0) >= 99 and row.get('roe', 0) <= 100:
+        warnings.append('ROE ~100% (possible error)')
+        is_invalid = True
     if row.get('div_yield', 0) > 15:
         warnings.append(f'Div Yield {row.get("div_yield", 0):.1f}% (unusual)')
     if row.get('pe', 0) < 0:
@@ -237,9 +241,13 @@ def validate_data(row):
     if row.get('yoy', 0) < -50:
         warnings.append('Revenue drop > 50%')
     if row.get('eps_growth', 0) < -50:
-        warnings.append('EPS drop > 50%')
+        warnings.append(f'EPS drop {row.get("eps_growth", 0):.1f}% (possible error)')
+        is_invalid = True
+    if row.get('eps_growth', 0) < -90:
+        warnings.append('EPS drop > 90% (data error)')
+        is_invalid = True
     
-    return warnings
+    return warnings, is_invalid
 
 def t(key):
     lang = st.session_state.get('lang', 'en')
@@ -739,6 +747,13 @@ with tab1:
         df['yoy'] = 0
     if 'eps_growth' not in df.columns:
         df['eps_growth'] = 0
+    
+    def check_invalid(row):
+        _, invalid = validate_data(row)
+        return invalid
+    
+    df['invalid'] = df.apply(check_invalid, axis=1)
+    valid_count = (~df['invalid']).sum()
     
     if not df.empty:
         st.caption(f"Loaded {len(df)} stocks")
