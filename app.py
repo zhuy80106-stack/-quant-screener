@@ -540,22 +540,28 @@ with tab1:
     
     if st.session_state.cached_data is None:
         with st.spinner(t('fetching')):
-            stock_limit = 150 if market_val == "Taiwan" else 200
-            
-            # Direct test fetch first
-            test_stock = st.session_state.stocks[0]
-            test_symbol = f"{test_stock}.TW" if market_val == "Taiwan" else test_stock
-            test_ticker = yf.Ticker(test_symbol)
-            test_info = test_ticker.info
-            st.caption(f"Test fetch: {test_symbol} -> {test_info.get('currentPrice') if test_info else 'FAILED'}")
-            
+            stock_limit = 50 if market_val == "Taiwan" else 100  # Reduced to avoid rate limit
             try:
+                # Add delay to avoid rate limiting
+                import time
+                time.sleep(1)
                 data = get_all_metrics(st.session_state.stocks[:stock_limit], market_val)
                 st.session_state.cached_data = data
-                st.caption(f"get_all_metrics returned {len(data)} items")
+                st.caption(f"Loaded {len(data)} stocks")
             except Exception as e:
-                st.error(f"Error in get_all_metrics: {e}")
-                st.session_state.cached_data = []
+                st.warning(f"Rate limited or error: {e}. Using sample data.")
+                # Use sample data as fallback
+                if market_val == "Taiwan":
+                    st.session_state.cached_data = [
+                        {'symbol': '2330', 'name': '台積電', 'price': 2030.0, 'pe': 27.5, 'pb': 6.5, 'div_yield': 1.5, 'roe': 35.0, 'yoy': 5.0, 'eps_growth': 10.0},
+                        {'symbol': '2317', 'name': '鴻海', 'price': 206.0, 'pe': 15.4, 'pb': 1.8, 'div_yield': 3.2, 'roe': 12.0, 'yoy': 2.0, 'eps_growth': 5.0},
+                        {'symbol': '2454', 'name': '聯發科', 'price': 1925.0, 'pe': 29.1, 'pb': 4.2, 'div_yield': 1.8, 'roe': 18.0, 'yoy': 8.0, 'eps_growth': 15.0},
+                    ]
+                else:
+                    st.session_state.cached_data = [
+                        {'symbol': 'AAPL', 'name': 'Apple Inc.', 'price': 175.0, 'pe': 28.0, 'pb': 45.0, 'div_yield': 0.5, 'roe': 150.0, 'yoy': 2.0, 'eps_growth': 5.0},
+                        {'symbol': 'MSFT', 'name': 'Microsoft', 'price': 380.0, 'pe': 35.0, 'pb': 12.0, 'div_yield': 0.8, 'roe': 40.0, 'yoy': 10.0, 'eps_growth': 15.0},
+                    ]
     
     df = pd.DataFrame(st.session_state.cached_data)
     st.caption(f"Loaded {len(df)} stocks from {market_val}")
