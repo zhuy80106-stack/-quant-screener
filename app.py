@@ -566,6 +566,8 @@ with tab1:
                         df[col] = df[col].fillna(0).replace([float('inf'), -float('inf')], 0)
                 st.session_state.cached_data = df.to_dict('records')
                 csv_loaded = True
+                if 'last_updated' in df.columns:
+                    st.caption(f"📅 Last Synced: {df['last_updated'].iloc[0]}")
             except Exception as e:
                 st.warning(f"CSV load failed: {e}")
         

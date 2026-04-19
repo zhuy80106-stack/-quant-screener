@@ -2,6 +2,7 @@ import yfinance as yf
 import pandas as pd
 from concurrent.futures import ThreadPoolExecutor
 import time
+from datetime import datetime
 
 TAIWAN_STOCKS = [
     '2330', '2317', '2454', '2412', '2882', '2891', '1301', '1326', '1215', '3008',
@@ -72,6 +73,7 @@ def fetch_all():
     
     df = pd.DataFrame(results)
     df = df[df['price'].notna()]
+    df['last_updated'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     df.to_csv('stocks_data.csv', index=False)
     print(f"Saved {len(df)} stocks to stocks_data.csv")
 
