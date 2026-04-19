@@ -227,8 +227,9 @@ def validate_data(row):
         warnings.append('ROE >100% (high leverage)')
     if row.get('roe', 0) < 0:
         warnings.append('Negative ROE')
-    if row.get('roe', 0) >= 99 and row.get('roe', 0) <= 100:
+    if row.get('roe', 0) >= 99:
         warnings.append('ROE ~100% (possible error)')
+    if row.get('roe', 0) >= 99:
         is_invalid = True
     if row.get('div_yield', 0) > 15:
         warnings.append(f'Div Yield {row.get("div_yield", 0):.1f}% (unusual)')
@@ -240,11 +241,11 @@ def validate_data(row):
         warnings.append('Profit margin < -50%')
     if row.get('yoy', 0) < -50:
         warnings.append('Revenue drop > 50%')
-    if row.get('eps_growth', 0) < -50:
-        warnings.append(f'EPS drop {row.get("eps_growth", 0):.1f}% (possible error)')
+    if row.get('eps_growth', 0) <= -99:
+        warnings.append(f'EPS drop {row.get("eps_growth", 0):.1f}% (data error)')
         is_invalid = True
-    if row.get('eps_growth', 0) < -90:
-        warnings.append('EPS drop > 90% (data error)')
+    if row.get('eps_growth', 0) >= 999:
+        warnings.append(f'EPS growth {row.get("eps_growth", 0):.1f}% (abnormal)')
         is_invalid = True
     
     return warnings, is_invalid
