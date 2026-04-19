@@ -532,15 +532,19 @@ with tab1:
         st.session_state.cached_data = None
         st.rerun()
     
-    if st.session_state.cached_data is None:
+if st.session_state.cached_data is None:
         with st.spinner(t('fetching')):
             stock_limit = 150 if market_val == "Taiwan" else 200
             try:
+                st.write(f"DEBUG: Fetching {stock_limit} stocks...")
                 data = get_all_metrics(st.session_state.stocks[:stock_limit], market_val)
+                st.write(f"DEBUG: Got {len(data)} results")
                 st.session_state.cached_data = data
-                st.success(f"✅ 成功讀取 {len(data)} 筆資料")
+                st.success(f"✅ {t('fetched_count').format(len(data))}")
             except Exception as e:
-                st.error(f"讀取錯誤: {e}")
+                st.error(f"Error: {e}")
+                import traceback
+                st.code(traceback.format_exc())
                 st.session_state.cached_data = []
     
     df = pd.DataFrame(st.session_state.cached_data)
