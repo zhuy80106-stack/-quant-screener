@@ -25,7 +25,7 @@ def fetch_one(symbol, market):
     try:
         t = yf.Ticker(ticker)
         info = t.info
-        time.sleep(0.1)
+        time.sleep(0.2)
         
         price = info.get('currentPrice') or info.get('regularMarketPrice')
         
