@@ -539,29 +539,23 @@ with tab1:
         st.rerun()
     
     if st.session_state.cached_data is None:
-        with st.spinner(t('fetching')):
-            stock_limit = 50 if market_val == "Taiwan" else 100  # Reduced to avoid rate limit
-            try:
-                # Add delay to avoid rate limiting
-                import time
-                time.sleep(1)
-                data = get_all_metrics(st.session_state.stocks[:stock_limit], market_val)
-                st.session_state.cached_data = data
-                st.caption(f"Loaded {len(data)} stocks")
-            except Exception as e:
-                st.warning(f"Rate limited or error: {e}. Using sample data.")
-                # Use sample data as fallback
-                if market_val == "Taiwan":
-                    st.session_state.cached_data = [
-                        {'symbol': '2330', 'name': '台積電', 'price': 2030.0, 'pe': 27.5, 'pb': 6.5, 'div_yield': 1.5, 'roe': 35.0, 'yoy': 5.0, 'eps_growth': 10.0},
-                        {'symbol': '2317', 'name': '鴻海', 'price': 206.0, 'pe': 15.4, 'pb': 1.8, 'div_yield': 3.2, 'roe': 12.0, 'yoy': 2.0, 'eps_growth': 5.0},
-                        {'symbol': '2454', 'name': '聯發科', 'price': 1925.0, 'pe': 29.1, 'pb': 4.2, 'div_yield': 1.8, 'roe': 18.0, 'yoy': 8.0, 'eps_growth': 15.0},
-                    ]
-                else:
-                    st.session_state.cached_data = [
-                        {'symbol': 'AAPL', 'name': 'Apple Inc.', 'price': 175.0, 'pe': 28.0, 'pb': 45.0, 'div_yield': 0.5, 'roe': 150.0, 'yoy': 2.0, 'eps_growth': 5.0},
-                        {'symbol': 'MSFT', 'name': 'Microsoft', 'price': 380.0, 'pe': 35.0, 'pb': 12.0, 'div_yield': 0.8, 'roe': 40.0, 'yoy': 10.0, 'eps_growth': 15.0},
-                    ]
+        # Use sample data to avoid yfinance rate limiting
+        if market_val == "Taiwan":
+            st.session_state.cached_data = [
+                {'symbol': '2330', 'name': '台積電', 'sector': 'Technology', 'price': 2030.0, 'pe': 27.5, 'pb': 6.5, 'div_yield': 1.5, 'roe': 35.0, 'debt': 20, 'profit_margin': 35, 'yoy': 5.0, 'eps_growth': 10.0},
+                {'symbol': '2317', 'name': '鴻海', 'sector': 'Technology', 'price': 206.0, 'pe': 15.4, 'pb': 1.8, 'div_yield': 3.2, 'roe': 12.0, 'debt': 40, 'profit_margin': 5, 'yoy': 2.0, 'eps_growth': 5.0},
+                {'symbol': '2454', 'name': '聯發科', 'sector': 'Technology', 'price': 1925.0, 'pe': 29.1, 'pb': 4.2, 'div_yield': 1.8, 'roe': 18.0, 'debt': 30, 'profit_margin': 20, 'yoy': 8.0, 'eps_growth': 15.0},
+                {'symbol': '2412', 'name': '中華電', 'sector': 'Telecom', 'price': 137.5, 'pe': 27.6, 'pb': 2.1, 'div_yield': 4.2, 'roe': 10.0, 'debt': 25, 'profit_margin': 15, 'yoy': 1.0, 'eps_growth': 2.0},
+                {'symbol': '2882', 'name': '玉山金', 'sector': 'Finance', 'price': 75.0, 'pe': 10.6, 'pb': 1.2, 'div_yield': 5.5, 'roe': 12.0, 'debt': 50, 'profit_margin': 30, 'yoy': 3.0, 'eps_growth': 5.0},
+            ]
+        else:
+            st.session_state.cached_data = [
+                {'symbol': 'AAPL', 'name': 'Apple Inc.', 'sector': 'Technology', 'price': 175.0, 'pe': 28.0, 'pb': 45.0, 'div_yield': 0.5, 'roe': 150.0, 'debt': 50, 'profit_margin': 25, 'yoy': 2.0, 'eps_growth': 5.0},
+                {'symbol': 'MSFT', 'name': 'Microsoft', 'sector': 'Technology', 'price': 380.0, 'pe': 35.0, 'pb': 12.0, 'div_yield': 0.8, 'roe': 40.0, 'debt': 40, 'profit_margin': 35, 'yoy': 10.0, 'eps_growth': 15.0},
+                {'symbol': 'GOOGL', 'name': 'Alphabet', 'sector': 'Technology', 'price': 140.0, 'pe': 25.0, 'pb': 6.0, 'div_yield': 0.0, 'roe': 25.0, 'debt': 30, 'profit_margin': 25, 'yoy': 8.0, 'eps_growth': 12.0},
+                {'symbol': 'NVDA', 'name': 'NVIDIA', 'sector': 'Technology', 'price': 450.0, 'pe': 60.0, 'pb': 40.0, 'div_yield': 0.0, 'roe': 80.0, 'debt': 35, 'profit_margin': 40, 'yoy': 30.0, 'eps_growth': 50.0},
+            ]
+        st.caption(f"Loaded {len(st.session_state.cached_data)} sample stocks (yfinance rate limited)")
     
     df = pd.DataFrame(st.session_state.cached_data)
     st.caption(f"Loaded {len(df)} stocks from {market_val}")
