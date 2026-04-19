@@ -677,14 +677,20 @@ with tab2:
                     
                     st.subheader(t('cumulative'))
                     fig = go.Figure()
-                    fig.add_trace(go.Scatter(x=port_ret.index, y=port_ret * 100, name=t('strategy'), line=dict(color=COLORS['success'], width=2)))
-                    fig.add_trace(go.Scatter(x=bench_ret.index, y=bench_ret * 100, name=t('benchmark'), line=dict(color=COLORS['primary'], width=2)))
+                    
+                    # Normalize both to start from 0%
+                    port_normalized = (port_ret / port_ret.iloc[0] - 1) * 100 if len(port_ret) > 0 else port_ret * 100
+                    bench_normalized = (bench_ret / bench_ret.iloc[0] - 1) * 100 if len(bench_ret) > 0 else bench_ret * 100
+                    
+                    fig.add_trace(go.Scatter(x=port_ret.index, y=port_normalized, name=t('strategy'), line=dict(color=COLORS['success'], width=2)))
+                    fig.add_trace(go.Scatter(x=bench_ret.index, y=bench_normalized, name=t('benchmark'), line=dict(color=COLORS['primary'], width=2)))
                     fig.update_layout(
                         template="plotly_dark",
                         paper_bgcolor=COLORS['bg'],
                         plot_bgcolor=COLORS['bg'],
                         xaxis_title=t('date'),
-                        yaxis_title=t('return_pct')
+                        yaxis_title=t('return_pct'),
+                        yaxis=dict(tickformat=".1f")
                     )
                     st.plotly_chart(fig, use_container_width=True)
                     
