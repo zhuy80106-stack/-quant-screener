@@ -561,6 +561,9 @@ with tab1:
                 df = pd.read_csv(csv_path)
                 if 'market' in df.columns:
                     df = df[df['market'] == market_val]
+                for col in df.columns:
+                    if df[col].dtype in ['float64', 'int64']:
+                        df[col] = df[col].fillna(0).replace([float('inf'), -float('inf')], 0)
                 st.session_state.cached_data = df.to_dict('records')
                 csv_loaded = True
             except Exception as e:
@@ -690,6 +693,11 @@ with tab1:
         st.stop()
     
     df = df.drop_duplicates(subset=['symbol'], keep='first')
+    
+    numeric_cols = ['pe', 'pb', 'div_yield', 'roe', 'profit_margin', 'yoy', 'eps_growth']
+    for col in numeric_cols:
+        if col in df.columns:
+            df[col] = df[col].fillna(0).replace([float('inf'), -float('inf')], 0)
     
     if 'yoy' not in df.columns:
         df['yoy'] = 0
