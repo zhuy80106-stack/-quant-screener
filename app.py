@@ -764,6 +764,7 @@ with tab1:
     
     # Force correct known bad data
     df.loc[df['symbol'] == 'BRK.B', 'sector'] = 'Financials'
+    st.write(f"DEBUG BRK sector: {df.loc[df['symbol'] == 'BRK.B', 'sector'].values}")
     
     numeric_cols = ['pe', 'pb', 'div_yield', 'roe', 'profit_margin', 'yoy', 'eps_growth']
     for col in numeric_cols:
