@@ -687,6 +687,18 @@ with tab2:
                         yaxis_title=t('return_pct')
                     )
                     st.plotly_chart(fig, use_container_width=True)
+                    
+                    # Show ticker list
+                    st.markdown("---")
+                    st.subheader("📋 本次回測股票清單")
+                    selected_stocks = st.session_state.selected[:50]
+                    col1, col2 = st.columns([1, 3])
+                    with col1:
+                        st.metric("股票數量", f"{len(selected_stocks)} 檔")
+                    with col2:
+                        stock_chunks = [selected_stocks[i:i+15] for i in range(0, len(selected_stocks), 15)]
+                        for chunk in stock_chunks:
+                            st.code(", ".join(chunk), language=None)
                 else:
                     st.error(t('backtest_fail'))
 
