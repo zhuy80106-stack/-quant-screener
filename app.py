@@ -338,7 +338,7 @@ def fetch_stock_metrics(symbol, market):
             'div_yield': div_yield_pct,
             'roe': min((info.get('returnOnEquity') or 0) * 100, 100),
             'debt': info.get('debtToEquity') or 0,
-            'profit_margin': (info.get('profitMargins') or 0) * 100,
+            'profit_margin': (info.get('profitMargins') or 0) * 100 if (info.get('profitMargins') or 0) > 0 else 0,
             'price': price,
             'is_growth': info.get('trailingPE', 0) and info.get('trailingPE') < 0,
             'yoy': (info.get('revenueGrowth') or 0) * 100,
