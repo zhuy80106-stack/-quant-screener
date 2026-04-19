@@ -844,13 +844,13 @@ with tab1:
             display_df = display_df.sort_values(sort_col, ascending=ascending)
             
             na_text = "Data Pending" if st.session_state.get('lang') == 'en' else "資料待補"
-            display_df['pe'] = display_df['pe'].apply(lambda x: f"{x:.2f}" if x > 0 else na_text)
-            display_df['pb'] = display_df['pb'].apply(lambda x: f"{x:.2f}" if x > 0 else na_text)
-            display_df['div_yield'] = display_df['div_yield'].apply(lambda x: f"{x:.2f}%" if x > 0 else na_text)
-            display_df['roe'] = display_df['roe'].apply(lambda x: f"{x:.2f}%" if x > 0 else na_text)
-            display_df['price'] = display_df['price'].apply(lambda x: f"${x:.2f}" if x > 0 else na_text)
-            display_df['yoy'] = display_df['yoy'].apply(lambda x: f"{x:.1f}%" if x != 0 else na_text)
-            display_df['eps_growth'] = display_df['eps_growth'].apply(lambda x: f"{x:.1f}%" if x != 0 else na_text)
+            display_df['pe'] = display_df['pe'].apply(lambda x: f"{x:.2f}" if pd.notna(x) and x != 0 else ("N/A" if x == 0 else na_text))
+            display_df['pb'] = display_df['pb'].apply(lambda x: f"{x:.2f}" if pd.notna(x) and x != 0 else ("N/A" if x == 0 else na_text))
+            display_df['div_yield'] = display_df['div_yield'].apply(lambda x: f"{x:.2f}%" if pd.notna(x) and x != 0 else ("N/A" if x == 0 else na_text))
+            display_df['roe'] = display_df['roe'].apply(lambda x: f"{x:.2f}%" if pd.notna(x) else na_text)
+            display_df['price'] = display_df['price'].apply(lambda x: f"${x:.2f}" if pd.notna(x) and x != 0 else ("N/A" if x == 0 else na_text))
+            display_df['yoy'] = display_df['yoy'].apply(lambda x: f"{x:.1f}%" if pd.notna(x) else na_text)
+            display_df['eps_growth'] = display_df['eps_growth'].apply(lambda x: f"{x:.1f}%" if pd.notna(x) else na_text)
             
             st.dataframe(
                 display_df.drop(columns=['warning']),
