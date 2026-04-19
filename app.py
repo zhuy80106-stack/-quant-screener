@@ -802,7 +802,9 @@ with tab1:
             valid_mask = ~df['invalid']
             st.write(f"DEBUG valid_mask count: {valid_mask.sum()}, invalid count: {(~valid_mask).sum()}")
             if strategy == t('value_investing'):
+                st.write(f"DEBUG params: pe<={params['pe']}, div>={params['div_yield']}")
                 mask = valid_mask & (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['pb'] <= params['pb']) & (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
+                st.write(f"DEBUG after mask: {len(df[mask])} stocks")
             elif strategy == t('quality_growth'):
                 mask = valid_mask & (df['roe'] >= params['roe']) & (df['debt'] <= params['debt']) & (df['profit_margin'] >= params['profit_margin']) & (df['yoy'] >= params['yoy_min'])
             elif strategy == t('high_dividend'):
