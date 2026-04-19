@@ -669,10 +669,11 @@ with tab2:
                     c3.metric(t('benchmark_return'), f"{bench_metrics.get('total_return', 0):.2f}%")
                     c4.metric(t('alpha'), f"{port_metrics.get('total_return', 0) - bench_metrics.get('total_return', 0):.2f}%")
                     
-                    c5, c6, c7 = st.columns(3)
+                    c5, c6, c7, c8 = st.columns(4)
                     c5.metric(t('volatility'), f"{port_metrics.get('volatility', 0):.2f}%")
-                    c6.metric(t('sharpe'), f"{port_metrics.get('sharpe', 0):.2f}")
-                    c7.metric(t('sortino'), f"{port_metrics.get('sortino', 0):.2f}")
+                    c6.metric("MDD", f"{port_metrics.get('max_drawdown', 0):.2f}%")
+                    c7.metric(t('sharpe'), f"{port_metrics.get('sharpe', 0):.2f}")
+                    c8.metric(t('sortino'), f"{port_metrics.get('sortino', 0):.2f}")
                     
                     st.subheader(t('cumulative'))
                     fig = go.Figure()
