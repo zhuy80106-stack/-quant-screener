@@ -378,7 +378,7 @@ def run_backtest(symbols, market, start_date, end_date):
     
     try:
         tickers = symbols[:50] + [benchmark]
-        data = yf.download(tickers, start=start_date, end=end_date, progress=False, auto_adjust=True)['Close']
+        data = yf.download(tickers, start=start_date, end=end_date, progress=False, auto_adjust=True, interval="1d")['Close']
         
         if data.empty or data.dropna().empty:
             return None, None
