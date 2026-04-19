@@ -17,7 +17,8 @@ USA_STOCKS = [
     'PG', 'MA', 'UNH', 'HD', 'DIS', 'BAC', 'ADBE', 'CRM', 'NFLX', 'CSCO',
     'INTC', 'AMD', 'ORCL', 'IBM', 'QCOM', 'TXN', 'AVGO', 'COST', 'NKE', 'MCD',
     'BA', 'CAT', 'GE', 'JPM', 'GS', 'MS', 'WMT', 'CVX', 'XOM', 'KO',
-    'PEP', 'T', 'VZ', 'MRK', 'PFE', 'ABBV', 'LLY', 'UNH', 'ISRG', 'BDX'
+    'PEP', 'T', 'VZ', 'MRK', 'PFE', 'ABBV', 'LLY', 'UNH', 'ISRG', 'BDX',
+    'MU'
 ]
 
 def get_val(info, *keys, default=0):
