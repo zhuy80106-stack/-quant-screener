@@ -10,7 +10,9 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import warnings
 warnings.filterwarnings('ignore')
 
-st.set_page_config(page_title="Quant Stock Screener", page_icon="📈", layout="wide")
+st.set_page_config(page_title="Quant Stock Screener", page_icon="📈", layout="wide", menu_items={
+        'About': 'Quant Stock Screener v1.0'
+    })
 
 COLORS = {
     'bg': '#0f0f1a',
@@ -52,6 +54,14 @@ st.markdown(f'''
     }}
     div[data-baseweb="slider"] {{
         touch-action: none;
+    }}
+    @media (max-width: 768px) {{
+        section[data-testid="stSidebar"] {{
+            width: 300px !important;
+        }}
+        section[data-testid="stSidebar"].collapsed {{
+            width: 0px !important;
+        }}
     }}
     </style>
 ''', unsafe_allow_html=True)
@@ -224,7 +234,7 @@ def get_taiwan_stocks():
                 if valid:
                     return valid
     except Exception as e:
-        print(f"API error: {e}")
+        print(f"FinMind API error: {e}")
     return default_stocks
 
 @st.cache_data(ttl=3600)
@@ -279,116 +289,50 @@ def fetch_stock_metrics(symbol, market):
             symbol_yf = symbol
         
         stock = yf.Ticker(symbol_yf)
-        
         info = stock.info
-        if not info or info.get('regularMarketPrice') is None:
-            hist = stock.history(period="2y")
-            if hist.empty or len(hist) < 10:
-                return None
         
-        try:
-            actions = stock.dividends
-            if not actions.empty and len(actions) >= 2:
-                last_div = actions.iloc[-1]
-                current_price = info.get('currentPrice') if info else hist['Close'].iloc[-1]
-                div_yield = (last_div / current_price * 100) if current_price and current_price > 0 else 0
-            else:
-                div_yield = info.get('dividendYield') * 100 if info and info.get('dividendYield') else 0
-        except:
-            div_yield = info.get('dividendYield') * 100 if info and info.get('dividendYield') else 0
-        
+        # Debug: print what we got
         if not info:
-            return None
+            return {'symbol': symbol, 'error': 'No info'}
+        if not info.get('regularMarketPrice'):
+            return {'symbol': symbol, 'error': 'No price'}
         
-        pe = info.get('trailingPE')
-        pb = info.get('priceToBook')
-        is_growth = False
-        
-        if pe is None or not isinstance(pe, (int, float)) or pe <= 0 or pe > 500:
-            pe = 0
-            if info.get('trailingPE') and info.get('trailingPE') < 0:
-                is_growth = True
-        else:
-            pe = float(pe)
-            
-        if pb is None or not isinstance(pb, (int, float)) or pb <= 0:
-            pb = 0
-        else:
-            pb = float(pb)
-            
-        if div_yield is None or not isinstance(div_yield, (int, float)) or div_yield < 0:
-            div_yield = 0
-        elif div_yield > 20:
-            div_yield = 20
-        
-        roe = 0
-        if info.get('returnOnEquity'):
-            try:
-                roe = float(info.get('returnOnEquity')) * 100
-            except:
-                roe = 0
-            
-        debt = 0
-        if info.get('debtToEquity'):
-            try:
-                debt = float(info.get('debtToEquity'))
-            except:
-                debt = 0
-        
-        profit_margin = 0
-        if info.get('profitMargins'):
-            try:
-                profit_margin = float(info.get('profitMargins')) * 100
-            except:
-                profit_margin = 0
-        
-        yoy = 0
-        if info.get('revenueGrowth'):
-            try:
-                yoy = float(info.get('revenueGrowth')) * 100
-            except:
-                yoy = 0
-        
-        eps_growth = 0
-        if info.get('earningsGrowth'):
-            try:
-                eps_growth = float(info.get('earningsGrowth')) * 100
-            except:
-                eps_growth = 0
-        
-        price = info.get('currentPrice') or info.get('regularMarketPrice') or 0
+        price = info.get('currentPrice') or info.get('regularMarketPrice')
         if not price:
-            return None
+            return {'symbol': symbol, 'error': 'Price is None'}
             
         return {
             'symbol': symbol,
             'name': info.get('shortName', symbol),
-            'sector': info.get('sector') or 'Technology',
-            'pe': pe,
-            'pb': pb,
-            'div_yield': div_yield,
-            'roe': roe,
-            'debt': debt,
-            'profit_margin': profit_margin,
+            'sector': info.get('sector') or 'Unknown',
+            'pe': info.get('trailingPE') or 0,
+            'pb': info.get('priceToBook') or 0,
+            'div_yield': (info.get('dividendYield') or 0) * 100,
+            'roe': (info.get('returnOnEquity') or 0) * 100,
+            'debt': info.get('debtToEquity') or 0,
+            'profit_margin': (info.get('profitMargins') or 0) * 100,
             'price': price,
-            'is_growth': is_growth,
-            'yoy': yoy,
-            'eps_growth': eps_growth
+            'is_growth': info.get('trailingPE', 0) and info.get('trailingPE') < 0,
+            'yoy': (info.get('revenueGrowth') or 0) * 100,
+            'eps_growth': (info.get('earningsGrowth') or 0) * 100
         }
-    except:
-        return None
+    except Exception as e:
+        return {'symbol': symbol, 'error': str(e)}
 
-@st.cache_data(ttl=3600)
 def get_all_metrics(stock_list, market):
+    if not stock_list:
+        return []
     results = []
     seen = set()
-    with ThreadPoolExecutor(max_workers=15) as executor:
-        futures = {executor.submit(fetch_stock_metrics, s, market): s for s in stock_list}
-        for future in as_completed(futures):
-            result = future.result()
-            if result and result['symbol'] not in seen:
-                seen.add(result['symbol'])
-                results.append(result)
+    
+    def fetch_one(symbol):
+        result = fetch_stock_metrics(symbol, market)
+        if result and 'error' not in result and result.get('price') and result['symbol'] not in seen:
+            return result
+        return None
+    
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        results = [r for r in executor.map(fetch_one, stock_list) if r]
     return results
 
 @st.cache_data(ttl=3600)
@@ -522,25 +466,38 @@ with tab1:
     st.header(t('multi_factor'))
     
     if 'stocks' not in st.session_state or st.session_state.get('current_market') != market_val:
-        with st.spinner(t('loading_stock')):
-            if market_val == "Taiwan":
-                st.session_state.stocks = get_taiwan_stocks()
-            else:
-                st.session_state.stocks = get_us_stocks()
-            st.session_state.current_market = market_val
-            st.session_state.cached_data = None
+        st.session_state.stocks = ['2330', '2317', '2454', '2412', '2882', '2891', '1301', '1326', '1215', '3008',
+                           '2382', '2451', '2308', '2207', '2227', '2231', '8046', '2105', '2609', '2474',
+                           '2449', '2377', '2353', '2344', '2327', '2315', '2303', '2297', '2288', '2408',
+                           '2409', '2413', '2417', '2420', '2421', '2425', '2427', '2428', '2430', '2431',
+                           '2433', '2434', '2436', '2437', '2438', '2441', '2443', '2444', '2445', '2448',
+                           '2455', '2456', '2457', '2458', '2460', '2461', '2462', '2463', '2464', '2465',
+                           '2474', '2475', '2476', '2478', '2480', '2481', '2482', '2491', '2492', '2493',
+                           '2603', '2605', '2606', '2607', '2608', '2609', '2610', '2611', '2612', '2613',
+                           '2614', '2615', '2616', '2617', '2618', '2624', '2630', '2633', '2634', '2635',
+                           '2881', '2883', '2884', '2885', '2886', '2887', '2888', '2889', '2890', '2892']
+        st.session_state.current_market = market_val
+        st.session_state.cached_data = None
     
-    if 'cached_data' not in st.session_state or st.session_state.cached_data is None:
-        with st.spinner(t('fetching')):
-            stock_limit = 80 if market_val == "Taiwan" else 150
-            st.session_state.cached_data = get_all_metrics(st.session_state.stocks[:stock_limit], market_val)
+    # 強制重新讀取
+    force_refresh = st.button("🔄 強制刷新數據")
+    if force_refresh:
+        st.session_state.cached_data = None
+        st.rerun()
+    
+    if st.session_state.cached_data is None:
+        with st.spinner("正在讀取股票數據..."):
+            stock_limit = 100 if market_val == "Taiwan" else 150
+            data = get_all_metrics(st.session_state.stocks[:stock_limit], market_val)
+            st.session_state.cached_data = data
+            st.success(f"✅ 成功讀取 {len(data)} 筆資料")
     
     df = pd.DataFrame(st.session_state.cached_data)
-    if df.empty:
-        st.warning("No data fetched. Trying alternative stock list...")
-        fallback_stocks = get_taiwan_stocks() if market_val == "Taiwan" else get_us_stocks()
-        st.session_state.cached_data = get_all_metrics(fallback_stocks[:50], market_val)
-        df = pd.DataFrame(st.session_state.cached_data)
+    st.write(f"目前有 {len(df)} 筆資料")
+    
+    if len(df) == 0:
+        st.error("無法讀取資料，請嘗試美國市場")
+        st.stop()
     
     df = df.drop_duplicates(subset=['symbol'], keep='first')
     
@@ -550,7 +507,18 @@ with tab1:
         df['eps_growth'] = 0
     
     if not df.empty:
-        if strategy == t('value_investing'):
+        st.caption(f"載入數據: {len(df)} 檔")
+        
+        # Show all stocks by default (no filter) as fallback
+        if 'show_all' not in st.session_state:
+            st.session_state.show_all = False
+        
+        show_all_toggle = st.checkbox("顯示所有股票 (無篩選)", value=st.session_state.show_all)
+        st.session_state.show_all = show_all_toggle
+        
+        if show_all_toggle:
+            filtered = df.copy()
+        elif strategy == t('value_investing'):
             mask = (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['pb'] <= params['pb']) & (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
         elif strategy == t('quality_growth'):
             mask = (df['roe'] >= params['roe']) & (df['debt'] <= params['debt']) & (df['profit_margin'] >= params['profit_margin']) & (df['yoy'] >= params['yoy_min'])
@@ -569,11 +537,14 @@ with tab1:
         
         filtered = df[mask]
         
-        col1, col2, col3 = st.columns([1, 2, 1])
+        # Debug: show raw data count
+        col0, col1, col2, col3 = st.columns([1, 1, 1, 1])
+        with col0:
+            st.caption(f"載入: {len(df)} 檔")
         with col1:
             st.metric(t('results'), f"{len(filtered)} / {len(df)}")
         with col2:
-            search_term = st.text_input("🔍 Search", placeholder="MU, AAPL...", label_visibility="collapsed")
+            search_term = st.text_input("🔍 Search", placeholder="2330...", label_visibility="collapsed")
         with col3:
             if st.button(t('refresh'), use_container_width=True):
                 st.session_state.cached_data = None
@@ -747,3 +718,53 @@ with tab3:
                 title=t('pe_div')
             )
             st.plotly_chart(fig_hist, use_container_width=True)
+
+st.markdown("---")
+if st.session_state.get('lang') == 'zh':
+    st.markdown("""
+### 📖 名詞解釋
+
+| 名詞 | 說明 |
+|------|------|
+| **P/E (本益比)** | 股價 ÷ 過去12個月 EPS。數值越低 = 可能被低估。 |
+| **P/B (股價淨值比)** | 股價 ÷ 每股淨值。小於 1 可能表示被低估。 |
+| **殖利率** | 年度股息 ÷ 股價 × 100%。顯示現金回報率。 |
+| **ROE (股東權益報酬率)** | 淨利 ÷ 股本。衡量獲利能力。 |
+| **營業利益率** | 營業利益 ÷ 營收。顯示每元銷售的獲利率。 |
+| **負債比** | 總負債 ÷ 總資產。越高 = 財務槓桿越高。 |
+| **YoY (年增率)** | 營收成長率，與去年同期相比。正值 = 成長。 |
+| **EPS 成長率** | 季度 EPS 與去年同期相比。顯示獲利動能。 |
+| **總報酬** | 期間起始到結束的整體漲跌幅。 |
+| **年化報酬 (CAGR)** | 複合年均增長率 — 期間的年化報酬。 |
+| **Alpha (超額報酬)** | 超越大盤的報酬。正值 = 表現優於大盤。 |
+| **波動率** | 報酬的標準差。越高 = 價格波動越大。 |
+| **夏普比率** | (報酬 - 無風險利率) ÷ 波動率。越高 = 風險調整後報酬越好。 |
+| **索提諾比率** | 類似夏普，但只計算下行波動。專注在壞風險。 |
+| **最大回撤** | 期間內最大谷底跌幅。 |
+
+*數據更新日期：{0}*
+""".format(datetime.now().strftime("%Y-%m-%d")))
+else:
+    st.markdown("""
+### 📖 Glossary
+
+| Term | Definition |
+|------|------------|
+| **P/E (Price-to-Earnings)** | Stock price divided by trailing 12-month EPS. Lower = potentially undervalued. |
+| **P/B (Price-to-Book)** | Stock price divided by book value per share. < 1 may indicate undervaluation. |
+| **Dividend Yield** | Annual dividends ÷ stock price × 100%. Shows cash return on investment. |
+| **ROE (Return on Equity)** | Net income ÷ shareholders' equity. Measures profitability of shareholder capital. |
+| **Profit Margin** | Net income ÷ revenue. Shows how much profit is extracted from each dollar of sales. |
+| **Debt Ratio** | Total debt ÷ total assets. Higher = more financial leverage/risk. |
+| **YoY (Year-over-Year)** | Revenue growth rate compared to same period last year. Positive = growth. |
+| **EPS Growth** | Quarterly EPS change vs same quarter last year. Shows earnings momentum. |
+| **Total Return** | Overall percentage gain or loss from start to end of period. |
+| **Annual Return (CAGR)** | Compound Annual Growth Rate — annualized return over the period. |
+| **Alpha** | Excess return above benchmark. Positive alpha = outperformance. |
+| **Volatility** | Standard deviation of returns. Higher = more price fluctuation/risk. |
+| **Sharpe Ratio** | (Return - Risk-free rate) ÷ Volatility. Higher = better risk-adjusted return. |
+| **Sortino Ratio** | Like Sharpe, but only considers downside volatility. Focuses on bad risk. |
+| **Max Drawdown** | Largest peak-to-trough decline during the period. |
+
+*Data updated: {0}*
+""".format(datetime.now().strftime("%Y-%m-%d")))
