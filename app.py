@@ -800,6 +800,7 @@ with tab1:
             st.caption(f"Showing ALL {len(filtered)} stocks")
         else:
             valid_mask = ~df['invalid']
+            st.write(f"DEBUG valid_mask count: {valid_mask.sum()}, invalid count: {(~valid_mask).sum()}")
             if strategy == t('value_investing'):
                 mask = valid_mask & (df['pe'] > 0) & (df['pe'] <= params['pe']) & (df['pb'] <= params['pb']) & (df['div_yield'] >= params['div_yield']) & (df['yoy'] >= params['yoy_min'])
             elif strategy == t('quality_growth'):
