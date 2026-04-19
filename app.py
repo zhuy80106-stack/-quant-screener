@@ -455,10 +455,13 @@ def calc_score(row):
     score += row['roe'] * 0.5
     if row['yoy'] > 0:
         score += min(row['yoy'], 20)
+    elif row['yoy'] < 0:
+        score += max(-20, row['yoy'])
     if row['eps_growth'] > 0:
         score += min(row['eps_growth'], 10)
+    elif row['eps_growth'] < 0:
+        score += max(-15, row['eps_growth'])
     return round(score, 1)
-    return str(val)
 
 st.title("📈 Quant Stock Screener")
 st.caption(f"📅 Last Updated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
