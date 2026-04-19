@@ -304,17 +304,19 @@ def fetch_stock_metrics(symbol, market):
             symbol_yf = symbol
         
         stock = yf.Ticker(symbol_yf)
-        info = stock.info
+        hist = stock.history(period="1d", auto_adjust=True)
+        if not hist.empty:
+            price = hist['Close'].iloc[-1]
+            info = stock.info
+        else:
+            info = stock.info
+            price = info.get('currentPrice') or info.get('regularMarketPrice')
         
-        # Debug: print what we got
-        if not info:
-            return {'symbol': symbol, 'error': 'No info'}
-        if not info.get('regularMarketPrice'):
-            return {'symbol': symbol, 'error': 'No price'}
-        
-        price = info.get('currentPrice') or info.get('regularMarketPrice')
         if not price:
             return {'symbol': symbol, 'error': 'Price is None'}
+        
+        if not info:
+            info = {}
             
         dividend_yield = info.get('dividendYield')
         if isinstance(dividend_yield, (int, float)) and dividend_yield > 0:

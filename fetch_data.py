@@ -24,10 +24,16 @@ def fetch_one(symbol, market):
     ticker = f"{symbol}.TW" if market == "Taiwan" else symbol
     try:
         t = yf.Ticker(ticker)
-        info = t.info
-        time.sleep(0.2)
         
-        price = info.get('currentPrice') or info.get('regularMarketPrice')
+        hist = t.history(period="1d", auto_adjust=True)
+        if not hist.empty:
+            price = hist['Close'].iloc[-1]
+            info = t.info
+        else:
+            info = t.info
+            price = info.get('currentPrice') or info.get('regularMarketPrice')
+        
+        time.sleep(0.2)
         
         dividend_yield = info.get('dividendYield')
         if isinstance(dividend_yield, (int, float)) and dividend_yield > 0:
