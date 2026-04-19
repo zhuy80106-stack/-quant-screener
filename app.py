@@ -557,10 +557,16 @@ with tab1:
                 {'symbol': '2207', 'name': '和泰車', 'sector': 'Auto', 'price': 1850.0, 'pe': 15.0, 'pb': 3.5, 'div_yield': 3.0, 'roe': 25.0, 'debt': 50, 'profit_margin': 8, 'yoy': 10.0, 'eps_growth': 15.0},
                 {'symbol': '2227', 'name': '零件-KY', 'sector': 'Technology', 'price': 520.0, 'pe': 22.0, 'pb': 4.0, 'div_yield': 1.5, 'roe': 20.0, 'debt': 30, 'profit_margin': 15, 'yoy': 8.0, 'eps_growth': 10.0},
                 {'symbol': '2231', 'name': '為升', 'sector': 'Auto', 'price': 385.0, 'pe': 28.0, 'pb': 5.0, 'div_yield': 1.0, 'roe': 18.0, 'debt': 25, 'profit_margin': 20, 'yoy': 5.0, 'eps_growth': 8.0},
+                {'symbol': '2308', 'name': '台達電', 'sector': 'Technology', 'price': 580.0, 'pe': 24.0, 'pb': 5.0, 'div_yield': 1.8, 'roe': 22.0, 'debt': 30, 'profit_margin': 12, 'yoy': 6.0, 'eps_growth': 10.0},
+                {'symbol': '2474', 'name': '浩鼎', 'sector': 'Pharma', 'price': 85.0, 'pe': 35.0, 'pb': 4.0, 'div_yield': 0.0, 'roe': 12.0, 'debt': 20, 'profit_margin': -10, 'yoy': 10.0, 'eps_growth': 5.0},
+                {'symbol': '2609', 'name': '陽明', 'sector': 'Shipping', 'price': 95.0, 'pe': 8.0, 'pb': 1.5, 'div_yield': 3.0, 'roe': 20.0, 'debt': 60, 'profit_margin': 15, 'yoy': -10.0, 'eps_growth': -20.0},
+                {'symbol': '2615', 'name': '長榮', 'sector': 'Shipping', 'price': 180.0, 'pe': 10.0, 'pb': 2.0, 'div_yield': 2.5, 'roe': 25.0, 'debt': 55, 'profit_margin': 20, 'yoy': -5.0, 'eps_growth': -15.0},
+                {'symbol': '2105', 'name': '正新', 'sector': 'Auto', 'price': 48.0, 'pe': 20.0, 'pb': 1.8, 'div_yield': 4.0, 'roe': 10.0, 'debt': 40, 'profit_margin': 8, 'yoy': 1.0, 'eps_growth': 2.0},
+                {'symbol': '8046', 'name': '楠梓電', 'sector': 'Technology', 'price': 120.0, 'pe': 15.0, 'pb': 2.5, 'div_yield': 2.0, 'roe': 18.0, 'debt': 35, 'profit_margin': 10, 'yoy': 3.0, 'eps_growth': 5.0},
             ]
         else:
             st.session_state.cached_data = [
-                {'symbol': 'AAPL', 'name': 'Apple Inc.', 'sector': 'Technology', 'price': 175.0, 'pe': 28.0, 'pb': 45.0, 'div_yield': 0.5, 'roe': 150.0, 'debt': 50, 'profit_margin': 25, 'yoy': 2.0, 'eps_growth': 5.0},
+                {'symbol': 'AAPL', 'name': 'Apple', 'sector': 'Technology', 'price': 175.0, 'pe': 28.0, 'pb': 45.0, 'div_yield': 0.5, 'roe': 150.0, 'debt': 50, 'profit_margin': 25, 'yoy': 2.0, 'eps_growth': 5.0},
                 {'symbol': 'MSFT', 'name': 'Microsoft', 'sector': 'Technology', 'price': 380.0, 'pe': 35.0, 'pb': 12.0, 'div_yield': 0.8, 'roe': 40.0, 'debt': 40, 'profit_margin': 35, 'yoy': 10.0, 'eps_growth': 15.0},
                 {'symbol': 'GOOGL', 'name': 'Alphabet', 'sector': 'Technology', 'price': 140.0, 'pe': 25.0, 'pb': 6.0, 'div_yield': 0.0, 'roe': 25.0, 'debt': 30, 'profit_margin': 25, 'yoy': 8.0, 'eps_growth': 12.0},
                 {'symbol': 'NVDA', 'name': 'NVIDIA', 'sector': 'Technology', 'price': 450.0, 'pe': 60.0, 'pb': 40.0, 'div_yield': 0.0, 'roe': 80.0, 'debt': 35, 'profit_margin': 40, 'yoy': 30.0, 'eps_growth': 50.0},
@@ -568,13 +574,19 @@ with tab1:
                 {'symbol': 'TSLA', 'name': 'Tesla', 'sector': 'Auto', 'price': 250.0, 'pe': 50.0, 'pb': 15.0, 'div_yield': 0.0, 'roe': 25.0, 'debt': 40, 'profit_margin': 15, 'yoy': 15.0, 'eps_growth': -10.0},
                 {'symbol': 'AMZN', 'name': 'Amazon', 'sector': 'Consumer', 'price': 155.0, 'pe': 45.0, 'pb': 8.0, 'div_yield': 0.0, 'roe': 20.0, 'debt': 35, 'profit_margin': 5, 'yoy': 8.0, 'eps_growth': 5.0},
                 {'symbol': 'BRK.B', 'name': 'Berkshire', 'sector': 'Finance', 'price': 360.0, 'pe': 10.0, 'pb': 1.5, 'div_yield': 2.5, 'roe': 10.0, 'debt': 20, 'profit_margin': 25, 'yoy': 3.0, 'eps_growth': 2.0},
-                {'symbol': 'JNJ', 'name': 'Johnson & Johnson', 'sector': 'Healthcare', 'price': 155.0, 'pe': 18.0, 'pb': 5.0, 'div_yield': 3.0, 'roe': 25.0, 'debt': 45, 'profit_margin': 20, 'yoy': 2.0, 'eps_growth': 3.0},
+                {'symbol': 'JNJ', 'name': 'J&J', 'sector': 'Healthcare', 'price': 155.0, 'pe': 18.0, 'pb': 5.0, 'div_yield': 3.0, 'roe': 25.0, 'debt': 45, 'profit_margin': 20, 'yoy': 2.0, 'eps_growth': 3.0},
                 {'symbol': 'V', 'name': 'Visa', 'sector': 'Finance', 'price': 280.0, 'pe': 30.0, 'pb': 12.0, 'div_yield': 0.8, 'roe': 50.0, 'debt': 35, 'profit_margin': 50, 'yoy': 8.0, 'eps_growth': 12.0},
-                {'symbol': 'PG', 'name': 'Procter & Gamble', 'sector': 'Consumer', 'price': 160.0, 'pe': 25.0, 'pb': 7.0, 'div_yield': 2.5, 'roe': 30.0, 'debt': 40, 'profit_margin': 20, 'yoy': 1.0, 'eps_growth': 2.0},
+                {'symbol': 'PG', 'name': 'P&G', 'sector': 'Consumer', 'price': 160.0, 'pe': 25.0, 'pb': 7.0, 'div_yield': 2.5, 'roe': 30.0, 'debt': 40, 'profit_margin': 20, 'yoy': 1.0, 'eps_growth': 2.0},
                 {'symbol': 'UNH', 'name': 'UnitedHealth', 'sector': 'Healthcare', 'price': 520.0, 'pe': 22.0, 'pb': 6.0, 'div_yield': 1.5, 'roe': 25.0, 'debt': 50, 'profit_margin': 8, 'yoy': 6.0, 'eps_growth': 8.0},
                 {'symbol': 'HD', 'name': 'Home Depot', 'sector': 'Retail', 'price': 350.0, 'pe': 22.0, 'pb': 50.0, 'div_yield': 2.5, 'roe': 400.0, 'debt': 60, 'profit_margin': 14, 'yoy': 2.0, 'eps_growth': 3.0},
-                {'symbol': 'DIS', 'name': 'Walt Disney', 'sector': 'Entertainment', 'price': 95.0, 'pe': 50.0, 'pb': 2.0, 'div_yield': 0.0, 'roe': 10.0, 'debt': 45, 'profit_margin': 8, 'yoy': 5.0, 'eps_growth': 20.0},
+                {'symbol': 'DIS', 'name': 'Disney', 'sector': 'Entertainment', 'price': 95.0, 'pe': 50.0, 'pb': 2.0, 'div_yield': 0.0, 'roe': 10.0, 'debt': 45, 'profit_margin': 8, 'yoy': 5.0, 'eps_growth': 20.0},
                 {'symbol': 'BAC', 'name': 'Bank of America', 'sector': 'Finance', 'price': 35.0, 'pe': 12.0, 'pb': 1.2, 'div_yield': 2.8, 'roe': 12.0, 'debt': 80, 'profit_margin': 30, 'yoy': 2.0, 'eps_growth': 4.0},
+                {'symbol': 'ADBE', 'name': 'Adobe', 'sector': 'Technology', 'price': 520.0, 'pe': 40.0, 'pb': 10.0, 'div_yield': 0.0, 'roe': 30.0, 'debt': 20, 'profit_margin': 35, 'yoy': 12.0, 'eps_growth': 15.0},
+                {'symbol': 'CRM', 'name': 'Salesforce', 'sector': 'Technology', 'price': 240.0, 'pe': 45.0, 'pb': 8.0, 'div_yield': 0.0, 'roe': 15.0, 'debt': 30, 'profit_margin': 10, 'yoy': 8.0, 'eps_growth': 12.0},
+                {'symbol': 'NFLX', 'name': 'Netflix', 'sector': 'Entertainment', 'price': 450.0, 'pe': 35.0, 'pb': 8.0, 'div_yield': 0.0, 'roe': 25.0, 'debt': 40, 'profit_margin': 20, 'yoy': 5.0, 'eps_growth': 10.0},
+                {'symbol': 'CSCO', 'name': 'Cisco', 'sector': 'Technology', 'price': 50.0, 'pe': 15.0, 'pb': 4.0, 'div_yield': 3.0, 'roe': 30.0, 'debt': 25, 'profit_margin': 25, 'yoy': 3.0, 'eps_growth': 5.0},
+                {'symbol': 'INTC', 'name': 'Intel', 'sector': 'Technology', 'price': 45.0, 'pe': 100.0, 'pb': 1.5, 'div_yield': 1.5, 'roe': 8.0, 'debt': 40, 'profit_margin': 5, 'yoy': -5.0, 'eps_growth': -20.0},
+                {'symbol': 'AMD', 'name': 'AMD', 'sector': 'Technology', 'price': 120.0, 'pe': 30.0, 'pb': 5.0, 'div_yield': 0.0, 'roe': 20.0, 'debt': 25, 'profit_margin': 12, 'yoy': 15.0, 'eps_growth': 25.0},
             ]
         st.caption(f"Loaded {len(st.session_state.cached_data)} sample stocks (yfinance rate limited)")
     
