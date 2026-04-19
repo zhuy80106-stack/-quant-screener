@@ -698,7 +698,7 @@ with tab1:
                     {'symbol': 'META', 'name': 'Meta', 'sector': 'Technology', 'price': 320.0, 'pe': 22.0, 'pb': 5.5, 'div_yield': 0.0, 'roe': 30.0, 'debt': 25, 'profit_margin': 30, 'yoy': 12.0, 'eps_growth': 20.0},
                     {'symbol': 'TSLA', 'name': 'Tesla', 'sector': 'Auto', 'price': 250.0, 'pe': 50.0, 'pb': 15.0, 'div_yield': 0.0, 'roe': 25.0, 'debt': 40, 'profit_margin': 15, 'yoy': 15.0, 'eps_growth': -10.0},
                     {'symbol': 'AMZN', 'name': 'Amazon', 'sector': 'Consumer', 'price': 155.0, 'pe': 45.0, 'pb': 8.0, 'div_yield': 0.0, 'roe': 20.0, 'debt': 35, 'profit_margin': 5, 'yoy': 8.0, 'eps_growth': 5.0},
-                    {'symbol': 'BRK.B', 'name': 'Berkshire', 'sector': 'Finance', 'price': 360.0, 'pe': 10.0, 'pb': 1.5, 'div_yield': 2.5, 'roe': 10.0, 'debt': 20, 'profit_margin': 25, 'yoy': 3.0, 'eps_growth': 2.0},
+                    {'symbol': 'BRK.B', 'name': 'Berkshire', 'sector': 'Financials', 'price': 360.0, 'pe': 10.0, 'pb': 1.5, 'div_yield': 2.5, 'roe': 10.0, 'debt': 20, 'profit_margin': 25, 'yoy': 3.0, 'eps_growth': 2.0},
                     {'symbol': 'JNJ', 'name': 'J&J', 'sector': 'Healthcare', 'price': 155.0, 'pe': 18.0, 'pb': 5.0, 'div_yield': 3.0, 'roe': 25.0, 'debt': 45, 'profit_margin': 20, 'yoy': 2.0, 'eps_growth': 3.0},
                     {'symbol': 'V', 'name': 'Visa', 'sector': 'Finance', 'price': 280.0, 'pe': 30.0, 'pb': 12.0, 'div_yield': 0.8, 'roe': 50.0, 'debt': 35, 'profit_margin': 50, 'yoy': 8.0, 'eps_growth': 12.0},
                     {'symbol': 'PG', 'name': 'P&G', 'sector': 'Consumer', 'price': 160.0, 'pe': 25.0, 'pb': 7.0, 'div_yield': 2.5, 'roe': 30.0, 'debt': 40, 'profit_margin': 20, 'yoy': 1.0, 'eps_growth': 2.0},
