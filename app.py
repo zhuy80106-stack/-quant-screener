@@ -329,7 +329,7 @@ def fetch_stock_metrics(symbol, market):
             'pe': info.get('trailingPE') or 0,
             'pb': info.get('priceToBook') or 0,
             'div_yield': div_yield_pct,
-            'roe': (info.get('returnOnEquity') or 0) * 100,
+            'roe': min((info.get('returnOnEquity') or 0) * 100, 100),
             'debt': info.get('debtToEquity') or 0,
             'profit_margin': (info.get('profitMargins') or 0) * 100,
             'price': price,
