@@ -322,18 +322,24 @@ def fetch_stock_metrics(symbol, market):
 def get_all_metrics(stock_list, market):
     if not stock_list:
         return []
-    results = []
-    seen = set()
     
     def fetch_one(symbol):
         result = fetch_stock_metrics(symbol, market)
-        if result and 'error' not in result and result.get('price') and result['symbol'] not in seen:
+        if result and 'error' not in result and result.get('price'):
             return result
         return None
     
-    with ThreadPoolExecutor(max_workers=10) as executor:
+    with ThreadPoolExecutor(max_workers=15) as executor:
         results = [r for r in executor.map(fetch_one, stock_list) if r]
-    return results
+    
+    # Remove duplicates by symbol
+    seen = set()
+    unique_results = []
+    for r in results:
+        if r['symbol'] not in seen:
+            seen.add(r['symbol'])
+            unique_results.append(r)
+    return unique_results
 
 @st.cache_data(ttl=3600)
 def run_backtest(symbols, market, start_date, end_date):
@@ -510,15 +516,23 @@ with tab1:
     if st.session_state.cached_data is None:
         with st.spinner("正在讀取股票數據..."):
             stock_limit = 100 if market_val == "Taiwan" else 150
-            data = get_all_metrics(st.session_state.stocks[:stock_limit], market_val)
-            st.session_state.cached_data = data
-            st.success(f"✅ 成功讀取 {len(data)} 筆資料")
+            try:
+                data = get_all_metrics(st.session_state.stocks[:stock_limit], market_val)
+                st.session_state.cached_data = data
+                st.success(f"✅ 成功讀取 {len(data)} 筆資料")
+            except Exception as e:
+                st.error(f"讀取錯誤: {e}")
+                st.session_state.cached_data = []
     
     df = pd.DataFrame(st.session_state.cached_data)
     st.write(f"目前有 {len(df)} 筆資料")
     
     if len(df) == 0:
         st.error("無法讀取資料，請嘗試美國市場")
+        if st.button("🔧 除錯模式"):
+            st.write(f"市場: {market_val}")
+            st.write(f"股票數: {len(st.session_state.stocks)}")
+            st.write(f"前10股票: {st.session_state.stocks[:10]}")
         st.stop()
     
     df = df.drop_duplicates(subset=['symbol'], keep='first')
