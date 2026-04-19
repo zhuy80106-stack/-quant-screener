@@ -29,7 +29,10 @@ def fetch_one(symbol, market):
         price = info.get('currentPrice') or info.get('regularMarketPrice')
         
         dividend_val = info.get('dividendYield') or info.get('dividendRate') or info.get('lastDividendValue') or 0
-        div_yield = (dividend_val if isinstance(dividend_val, (int, float)) and dividend_val > 0 else 0) * 100
+        if isinstance(dividend_val, (int, float)) and dividend_val > 0:
+            div_yield = dividend_val * 100 if dividend_val < 1 else dividend_val
+        else:
+            div_yield = 0
         
         return {
             'symbol': symbol,
