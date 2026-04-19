@@ -30,7 +30,7 @@ def fetch_one(symbol, market):
         
         dividend_yield = info.get('dividendYield')
         if isinstance(dividend_yield, (int, float)) and dividend_yield > 0:
-            div_yield = dividend_yield * 100 if dividend_yield < 1 else dividend_yield
+            div_yield = dividend_yield if dividend_yield >= 1 else dividend_yield * 100
         else:
             dividend_rate = info.get('dividendRate') or info.get('lastDividendValue') or 0
             if isinstance(dividend_rate, (int, float)) and dividend_rate > 0 and price:
