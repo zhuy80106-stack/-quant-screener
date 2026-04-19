@@ -319,6 +319,8 @@ def fetch_stock_metrics(symbol, market):
         dividend_val = info.get('dividendYield') or info.get('dividendRate') or info.get('lastDividendValue') or 0
         if isinstance(dividend_val, (int, float)) and dividend_val > 0:
             div_yield_pct = dividend_val * 100 if dividend_val < 1 else dividend_val
+            if div_yield_pct > 20:
+                div_yield_pct = 0
         else:
             div_yield_pct = 0
         
