@@ -795,6 +795,7 @@ with tab1:
         
         if show_all_toggle:
             filtered = df.copy()
+            st.warning("⚠️ 顯示全部模式包含數據異常的股票（如 UNH EPS -99.9%）")
             st.caption(f"Showing ALL {len(filtered)} stocks")
         else:
             valid_mask = ~df['invalid']
