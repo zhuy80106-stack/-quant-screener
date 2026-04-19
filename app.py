@@ -371,7 +371,7 @@ def fetch_stock_metrics(symbol, market):
         return {
             'symbol': symbol,
             'name': info.get('shortName', symbol),
-            'sector': 'Finance' if symbol == 'BRK.B' else (info.get('sector') or 'Unknown'),
+            'sector': 'Financials' if symbol == 'BRK.B' else (info.get('sector') or 'Unknown'),
             'pe': (info.get('trailingPE') or 0) if (info.get('trailingPE') or 0) > 0 and (info.get('trailingPE') or 0) < 200 else 0,
             'pb': info.get('priceToBook') or 0,
             'div_yield': div_yield_pct,
