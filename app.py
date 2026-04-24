@@ -842,7 +842,21 @@ with tab1:
             sector_medians = get_sector_medians(display_df)
             display_df['score'] = display_df.apply(lambda r: calc_score(r, sector_medians), axis=1)
             
-            display_df['warning'] = display_df['eps_growth'].apply(lambda x: '⚠️' if x < -20 else '')
+            def get_warning_icon(row):
+                warnings = []
+                if row.get('eps_growth', 0) < -20:
+                    warnings.append(f"EPS growth {row.get('eps_growth', 0):.1f}%")
+                if row.get('pe', 0) <= 0:
+                    warnings.append("P/E not available")
+                if row.get('div_yield', 0) > 30:
+                    warnings.append(f"Unusual div yield {row.get('div_yield', 0):.1f}%")
+                if row.get('roe', 0) > 100:
+                    warnings.append("ROE >100%")
+                if row.get('yoy', 0) < -50:
+                    warnings.append(f"Revenue down {row.get('yoy', 0):.1f}%")
+                return '⚠️ ' + '; '.join(warnings) if warnings else ''
+            
+            display_df['warning'] = display_df.apply(get_warning_icon, axis=1)
             display_df['name'] = display_df.apply(lambda r: f"{r['name']} {r['warning']}", axis=1)
             
             sort_col = st.selectbox("Sort by", ['score', 'pe', 'pb', 'div_yield', 'roe', 'price', 'yoy', 'eps_growth'], index=0, 
